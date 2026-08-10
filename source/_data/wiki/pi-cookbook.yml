@@ -1,0 +1,74 @@
+# pi-cookbook wiki 项目描述
+# 字段含义参考：https://xaoxuu.com/wiki/stellar/wiki-settings/
+
+name: pi-cookbook
+title: Pi Agent Cookbook
+subtitle: Pi 智能体实用指南 · 22 章 / 5 个示例项目
+tags:
+  - Pi
+  - Coding Agent
+  - 教程
+# icon: /assets/wiki/pi-cookbook.svg
+# cover: /assets/wiki/pi-cookbook-cover.svg
+
+# 项目简介：用于卡片和 meta 描述
+description: |
+  基于 Pi 官方文档与社区资源编写的实用指南，覆盖安装、新手入门、AGENTS.md、工具、安全、模型与会话、扩展与自定义工具、多 Agent、自动化、调试、最佳实践、45 个实战食谱与速查表。
+
+# 对应 GitHub 仓库（可选，用于右上角"在 GitHub 上查看"链接）
+# 留空则不显示
+repo: ''
+
+# 是否启用站内搜索
+search: true
+
+# 页面所在目录（相对于 Hexo 站点 source/）。
+# 这里指向本项目里的 wiki/pi-cookbook/ 目录。
+base_dir: wiki/pi-cookbook/
+
+# 目录树：按读者难度分级，与 README 的"适合谁"对齐
+tree:
+  '🟢 新手入门':
+    - introduction
+    - installation
+    - beginner-mode
+    - basics
+    - glossary
+  '🟡 进阶使用':
+    - agents-md
+    - tools
+    - security
+    - models-providers
+    - sessions-context
+    - development-workflow
+    - prompt-engineering
+    - recipes
+    - cheatsheet
+  '🔴 高级与扩展':
+    - extensions
+    - custom-tools
+    - personal-agents
+    - multi-agent
+    - automation
+    - debugging
+    - best-practices
+    - anti-patterns
+
+# 自定义左侧栏组件（可选；不填则使用默认 tree + timeline）
+# leftbar:
+#   - tree
+#   - timeline_posts
+#   - related
+
+# 是否在文末显示评论（giscus 等）
+comments:
+  service: giscus
+
+# 是否显示分享按钮
+share: true
+
+# 许可证：true 继承站点默认，也可填自定义文本或 URL
+license: true
+
+# 评论区上方的小标题
+comment_title: 讨论与反馈
