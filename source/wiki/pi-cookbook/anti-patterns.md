@@ -1,6 +1,7 @@
 ---
 wiki: pi-cookbook
-title: 18 — 12 个常见反模式
+title: 12 个常见反模式
+seo_title: 12 个常见反模式
 group: "🔴 高级与扩展"
 order: 19
 ---
@@ -65,5 +66,5 @@ Pi 改完直接 `git commit` 是最常见的回归来源。养成习惯：先 `g
 
 ## 下一步
 
-- [19-recipes.md](./recipes.md) — 实战食谱（按场景给出的具体调用）
-- [20-cheatsheet.md](./cheatsheet.md) — 一页速查表
+- [45 个实战食谱](./recipes/) — 实战食谱（按场景给出的具体调用）
+- [速查表](./cheatsheet/) — 一页速查表

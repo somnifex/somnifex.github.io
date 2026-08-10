@@ -1,6 +1,7 @@
 ---
 wiki: pi-cookbook
-title: 09 — 10 套开发工作流
+title: 10 套开发工作流
+seo_title: 10 套开发工作流
 group: "🟡 进阶使用"
 order: 10
 ---
@@ -137,5 +138,5 @@ pi --tools read,grep,find,ls -p "We have a production issue: users report 500 er
 
 ## 下一步
 
-- [10-prompt-engineering.md](./prompt-engineering.md) — 21 个提示模板
-- [19-recipes.md](./recipes.md) — 45 个实战食谱
+- [21 个提示模板](./prompt-engineering/) — 21 个提示模板
+- [45 个实战食谱](./recipes/) — 45 个实战食谱

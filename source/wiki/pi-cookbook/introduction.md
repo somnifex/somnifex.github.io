@@ -1,6 +1,7 @@
 ---
 wiki: pi-cookbook
-title: 00 — 引言：Pi 是什么
+title: 引言：Pi 是什么
+seo_title: 引言：Pi 是什么
 group: "🟢 新手入门"
 order: 1
 ---
@@ -105,5 +106,5 @@ graph TD
 
 ## 下一步
 
-- [01-installation.md](./installation.md) — 安装 Pi
-- [02-beginner-mode.md](./beginner-mode.md) — 零门槛第一次对话
+- [安装 Pi](./installation/) — 安装 Pi
+- [奶奶模式：零门槛第一次对话](./beginner-mode/) — 零门槛第一次对话

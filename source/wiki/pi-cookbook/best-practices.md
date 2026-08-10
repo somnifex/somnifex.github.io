@@ -1,6 +1,7 @@
 ---
 wiki: pi-cookbook
-title: 17 — 12 条最佳实践
+title: 12 条最佳实践
+seo_title: 12 条最佳实践
 group: "🔴 高级与扩展"
 order: 18
 ---
@@ -156,5 +157,5 @@ cp -r ~/.pi/agent ~/.pi/agent-backup
 
 ## 下一步
 
-- [18-anti-patterns.md](./anti-patterns.md) — 反模式
-- [19-recipes.md](./recipes.md) — 实战食谱
+- [12 个常见反模式](./anti-patterns/) — 反模式
+- [45 个实战食谱](./recipes/) — 实战食谱

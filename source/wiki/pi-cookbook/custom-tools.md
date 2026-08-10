@@ -1,6 +1,7 @@
 ---
 wiki: pi-cookbook
-title: 12 — 用 TypeScript 写自定义工具
+title: 用 TypeScript 写自定义工具
+seo_title: 用 TypeScript 写自定义工具
 group: "🔴 高级与扩展"
 order: 13
 ---
@@ -334,5 +335,5 @@ pi.registerTool({
 
 ## 下一步
 
-- [13-personal-agents.md](./personal-agents.md) — 个人 Agent 配置
-- [14-multi-agent.md](./multi-agent.md) — 多 Agent 协作
+- [个人 Agent 配置](./personal-agents/) — 个人 Agent 配置
+- [多 Agent 编排](./multi-agent/) — 多 Agent 协作

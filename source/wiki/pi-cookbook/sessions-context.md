@@ -1,6 +1,7 @@
 ---
 wiki: pi-cookbook
-title: 08 — 会话与上下文
+title: 会话与上下文
+seo_title: 会话与上下文
 group: "🟡 进阶使用"
 order: 9
 ---
@@ -153,5 +154,5 @@ graph TD
 
 ## 下一步
 
-- [09-development-workflow.md](./development-workflow.md) — 把会话管理用到开发流程
-- [10-prompt-engineering.md](./prompt-engineering.md) — 提示模板
+- [10 套开发工作流](./development-workflow/) — 把会话管理用到开发流程
+- [21 个提示模板](./prompt-engineering/) — 提示模板

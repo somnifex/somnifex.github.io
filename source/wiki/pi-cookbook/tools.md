@@ -1,6 +1,7 @@
 ---
 wiki: pi-cookbook
-title: 05 — 工具：内置 / 只读 / 自定义
+title: 工具：内置 / 只读 / 自定义
+seo_title: 工具：内置 / 只读 / 自定义
 group: "🟡 进阶使用"
 order: 6
 ---
@@ -105,8 +106,8 @@ Pi 允许通过 **Extensions** 注册自定义工具，比如天气查询、公�
 
 详细见：
 
-- [11-extensions.md](./extensions.md) — 扩展架构
-- [12-custom-tools.md](./custom-tools.md) — 写自定义工具
+- [扩展架构](./extensions/) — 扩展架构
+- [用 TypeScript 写自定义工具](./custom-tools/) — 写自定义工具
 
 ---
 
@@ -125,5 +126,5 @@ Pi 允许通过 **Extensions** 注册自定义工具，比如天气查询、公�
 
 ## 下一步
 
-- [06-security.md](./security.md) — 安全：Trust ≠ Sandbox
-- [11-extensions.md](./extensions.md) — 自定义工具与扩展
+- [安全：Trust ≠ Sandbox](./security/) — 安全：Trust ≠ Sandbox
+- [扩展架构](./extensions/) — 自定义工具与扩展

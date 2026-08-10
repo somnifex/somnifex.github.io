@@ -1,6 +1,7 @@
 ---
 wiki: pi-cookbook
-title: 19 — 45 个实战食谱
+title: 45 个实战食谱
+seo_title: 45 个实战食谱
 group: "🟡 进阶使用"
 order: 20
 ---
@@ -331,5 +332,5 @@ git diff main...HEAD | pi -p "根据以上 diff 生成 PR 描述"
 
 ## 下一步
 
-- [20-cheatsheet.md](./cheatsheet.md) — 一页速查表
-- [21-glossary.md](./glossary.md) — 术语表
+- [速查表](./cheatsheet/) — 一页速查表
+- [术语表](./glossary/) — 术语表

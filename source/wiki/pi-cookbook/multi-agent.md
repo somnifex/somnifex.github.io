@@ -1,6 +1,7 @@
 ---
 wiki: pi-cookbook
-title: 14 — 多 Agent 编排
+title: 多 Agent 编排
+seo_title: 多 Agent 编排
 group: "🔴 高级与扩展"
 order: 15
 ---
@@ -174,5 +175,5 @@ tasks/
 
 ## 下一步
 
-- [15-automation.md](./automation.md) — 自动化与 CI 集成
-- [16-debugging.md](./debugging.md) — 调试与故障排除
+- [自动化：cron / CI / RPC](./automation/) — 自动化与 CI 集成
+- [调试与排错](./debugging/) — 调试与故障排除

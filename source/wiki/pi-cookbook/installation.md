@@ -1,6 +1,7 @@
 ---
 wiki: pi-cookbook
-title: 01 — 安装 Pi
+title: 安装 Pi
+seo_title: 安装 Pi
 group: "🟢 新手入门"
 order: 2
 ---
@@ -212,5 +213,5 @@ npm uninstall -g @earendil-works/pi-coding-agent
 
 ## 下一步
 
-- [02-beginner-mode.md](./beginner-mode.md) — 零门槛第一次对话
-- [03-basics.md](./basics.md) — 交互界面与基础命令
+- [奶奶模式：零门槛第一次对话](./beginner-mode/) — 零门槛第一次对话
+- [Pi 基础使用](./basics/) — 交互界面与基础命令

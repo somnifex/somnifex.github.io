@@ -1,6 +1,7 @@
 ---
 wiki: pi-cookbook
-title: 10 — 21 个提示模板
+title: 21 个提示模板
+seo_title: 21 个提示模板
 group: "🟡 进阶使用"
 order: 11
 ---
@@ -263,5 +264,5 @@ $@
 
 ## 下一步
 
-- [11-extensions.md](./extensions.md) — 扩展开发
-- [19-recipes.md](./recipes.md) — 45 个实战食谱
+- [扩展架构](./extensions/) — 扩展开发
+- [45 个实战食谱](./recipes/) — 45 个实战食谱

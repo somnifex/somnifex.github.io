@@ -1,6 +1,7 @@
 ---
 wiki: pi-cookbook
-title: 06 — 安全：Trust ≠ Sandbox
+title: 安全：Trust ≠ Sandbox
+seo_title: 安全：Trust ≠ Sandbox
 group: "🟡 进阶使用"
 order: 7
 ---
@@ -153,5 +154,5 @@ OpenShell 是 NVIDIA 出品的策略化沙箱（policy-controlled sandbox），�
 
 ## 下一步
 
-- [07-models-providers.md](./models-providers.md) — 模型与服务商配置
-- [15-automation.md](./automation.md) — 在容器/CI 里安全运行 Pi
+- [模型与服务商](./models-providers/) — 模型与服务商配置
+- [自动化：cron / CI / RPC](./automation/) — 在容器/CI 里安全运行 Pi

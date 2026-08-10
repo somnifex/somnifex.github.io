@@ -1,6 +1,7 @@
 ---
 wiki: pi-cookbook
-title: 15 — 自动化：cron / CI / RPC
+title: 自动化：cron / CI / RPC
+seo_title: 自动化：cron / CI / RPC
 group: "🔴 高级与扩展"
 order: 16
 ---
@@ -179,5 +180,5 @@ docker run --rm -e ANTHROPIC_API_KEY=$KEY pi-runner -p "运行测试"
 
 ## 下一步
 
-- [16-debugging.md](./debugging.md) — 调试与故障排除
-- [17-best-practices.md](./best-practices.md) — 最佳实践
+- [调试与排错](./debugging/) — 调试与故障排除
+- [12 条最佳实践](./best-practices/) — 最佳实践

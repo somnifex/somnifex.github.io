@@ -1,6 +1,7 @@
 ---
 wiki: pi-cookbook
-title: 11 — 扩展架构
+title: 扩展架构
+seo_title: 扩展架构
 group: "🔴 高级与扩展"
 order: 12
 ---
@@ -362,5 +363,5 @@ pi -e ./my-extension.ts
 
 ## 下一步
 
-- [12-custom-tools.md](./custom-tools.md) — 自定义工具开发
-- [13-personal-agents.md](./personal-agents.md) — 个人 Agent 工作流
+- [用 TypeScript 写自定义工具](./custom-tools/) — 自定义工具开发
+- [个人 Agent 配置](./personal-agents/) — 个人 Agent 工作流

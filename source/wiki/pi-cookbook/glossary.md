@@ -1,6 +1,7 @@
 ---
 wiki: pi-cookbook
-title: 21 — 术语表
+title: 术语表
+seo_title: 术语表
 group: "🟢 新手入门"
 order: 22
 ---
@@ -261,5 +262,5 @@ order: 22
 
 ## 下一步
 
-- 回到 [README.md](../../README.md) 开始你的第一个项目
-- 或查看 [examples/](../../examples/) 动手实践
+- 回到 [仓库首页](../../) 开始你的第一个项目
+- 或查看 [示例项目](../../examples/) 动手实践

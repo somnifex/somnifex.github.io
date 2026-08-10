@@ -1,6 +1,7 @@
 ---
 wiki: pi-cookbook
-title: 20 — 速查表
+title: 速查表
+seo_title: 速查表
 group: "🟡 进阶使用"
 order: 21
 ---
@@ -253,6 +254,6 @@ Provide a plan first, then implement after confirmation.
 
 ## 下一步
 
-- [21-glossary.md](./glossary.md) — 术语表
+- [术语表](./glossary/) — 术语表
 
 > 这一页是查询用的，不是阅读用的。遇到具体问题再翻相应表格。

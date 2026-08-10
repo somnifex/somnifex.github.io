@@ -1,6 +1,7 @@
 ---
 wiki: pi-cookbook
-title: 13 — 个人 Agent 配置
+title: 个人 Agent 配置
+seo_title: 个人 Agent 配置
 group: "🔴 高级与扩展"
 order: 14
 ---
@@ -189,5 +190,5 @@ alias pi-sec='pi --tools read,grep,find,ls --system-prompt ~/.pi/agent/agents/se
 
 ## 下一步
 
-- [14-multi-agent.md](./multi-agent.md) — 多 Agent 协作模式
-- [15-automation.md](./automation.md) — 自动化与 CI 集成
+- [多 Agent 编排](./multi-agent/) — 多 Agent 协作模式
+- [自动化：cron / CI / RPC](./automation/) — 自动化与 CI 集成

@@ -1,6 +1,7 @@
 ---
 wiki: pi-cookbook
-title: 04 — AGENTS.md 编写指南
+title: AGENTS.md 编写指南
+seo_title: AGENTS.md 编写指南
 group: "🟡 进阶使用"
 order: 5
 ---
@@ -216,5 +217,5 @@ graph TD
 
 ## 下一步
 
-- [05-tools.md](./tools.md) — 内置工具与 read-only 模式
-- [09-development-workflow.md](./development-workflow.md) — 把 AGENTS.md 用到开发工作流里
+- [工具：内置 / 只读 / 自定义](./tools/) — 内置工具与 read-only 模式
+- [10 套开发工作流](./development-workflow/) — 把 AGENTS.md 用到开发工作流里

@@ -1,6 +1,7 @@
 ---
 wiki: pi-cookbook
-title: 16 — 调试与排错
+title: 调试与排错
+seo_title: 调试与排错
 group: "🔴 高级与扩展"
 order: 17
 ---
@@ -159,5 +160,5 @@ tail -n 50 ~/.pi/agent/sessions/*/session.jsonl
 
 ## 下一步
 
-- [17-best-practices.md](./best-practices.md) — 最佳实践
-- [18-anti-patterns.md](./anti-patterns.md) — 反模式
+- [12 条最佳实践](./best-practices/) — 最佳实践
+- [12 个常见反模式](./anti-patterns/) — 反模式
