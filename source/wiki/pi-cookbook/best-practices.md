@@ -157,5 +157,5 @@ cp -r ~/.pi/agent ~/.pi/agent-backup
 
 ## 下一步
 
-- [12 个常见反模式](./anti-patterns/) — 反模式
-- [45 个实战食谱](./recipes/) — 实战食谱
+- [12 个常见反模式](../anti-patterns/) — 反模式
+- [45 个实战食谱](../recipes/) — 实战食谱

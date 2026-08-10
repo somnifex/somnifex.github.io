@@ -175,5 +175,5 @@ tasks/
 
 ## 下一步
 
-- [自动化：cron / CI / RPC](./automation/) — 自动化与 CI 集成
-- [调试与排错](./debugging/) — 调试与故障排除
+- [自动化：cron / CI / RPC](../automation/) — 自动化与 CI 集成
+- [调试与排错](../debugging/) — 调试与故障排除

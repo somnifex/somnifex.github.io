@@ -335,5 +335,5 @@ pi.registerTool({
 
 ## 下一步
 
-- [个人 Agent 配置](./personal-agents/) — 个人 Agent 配置
-- [多 Agent 编排](./multi-agent/) — 多 Agent 协作
+- [个人 Agent 配置](../personal-agents/) — 个人 Agent 配置
+- [多 Agent 编排](../multi-agent/) — 多 Agent 协作

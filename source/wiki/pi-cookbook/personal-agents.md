@@ -190,5 +190,5 @@ alias pi-sec='pi --tools read,grep,find,ls --system-prompt ~/.pi/agent/agents/se
 
 ## 下一步
 
-- [多 Agent 编排](./multi-agent/) — 多 Agent 协作模式
-- [自动化：cron / CI / RPC](./automation/) — 自动化与 CI 集成
+- [多 Agent 编排](../multi-agent/) — 多 Agent 协作模式
+- [自动化：cron / CI / RPC](../automation/) — 自动化与 CI 集成

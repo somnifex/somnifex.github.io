@@ -206,5 +206,5 @@ pi --models "claude-*,gpt-4o,gemini-2*"
 
 ## 下一步
 
-- [会话与上下文](./sessions-context/) — 会话与上下文管理
-- [扩展架构](./extensions/) — 注册自定义 Provider
+- [会话与上下文](../sessions-context/) — 会话与上下文管理
+- [扩展架构](../extensions/) — 注册自定义 Provider

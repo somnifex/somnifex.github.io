@@ -332,5 +332,5 @@ git diff main...HEAD | pi -p "根据以上 diff 生成 PR 描述"
 
 ## 下一步
 
-- [速查表](./cheatsheet/) — 一页速查表
-- [术语表](./glossary/) — 术语表
+- [速查表](../cheatsheet/) — 一页速查表
+- [术语表](../glossary/) — 术语表

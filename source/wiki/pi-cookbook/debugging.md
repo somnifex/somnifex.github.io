@@ -160,5 +160,5 @@ tail -n 50 ~/.pi/agent/sessions/*/session.jsonl
 
 ## 下一步
 
-- [12 条最佳实践](./best-practices/) — 最佳实践
-- [12 个常见反模式](./anti-patterns/) — 反模式
+- [12 条最佳实践](../best-practices/) — 最佳实践
+- [12 个常见反模式](../anti-patterns/) — 反模式

@@ -180,5 +180,5 @@ docker run --rm -e ANTHROPIC_API_KEY=$KEY pi-runner -p "运行测试"
 
 ## 下一步
 
-- [调试与排错](./debugging/) — 调试与故障排除
-- [12 条最佳实践](./best-practices/) — 最佳实践
+- [调试与排错](../debugging/) — 调试与故障排除
+- [12 条最佳实践](../best-practices/) — 最佳实践

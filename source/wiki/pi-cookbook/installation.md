@@ -213,5 +213,5 @@ npm uninstall -g @earendil-works/pi-coding-agent
 
 ## 下一步
 
-- [奶奶模式：零门槛第一次对话](./beginner-mode/) — 零门槛第一次对话
-- [Pi 基础使用](./basics/) — 交互界面与基础命令
+- [奶奶模式：零门槛第一次对话](../beginner-mode/) — 零门槛第一次对话
+- [Pi 基础使用](../basics/) — 交互界面与基础命令

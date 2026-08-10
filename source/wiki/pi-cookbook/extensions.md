@@ -363,5 +363,5 @@ pi -e ./my-extension.ts
 
 ## 下一步
 
-- [用 TypeScript 写自定义工具](./custom-tools/) — 自定义工具开发
-- [个人 Agent 配置](./personal-agents/) — 个人 Agent 工作流
+- [用 TypeScript 写自定义工具](../custom-tools/) — 自定义工具开发
+- [个人 Agent 配置](../personal-agents/) — 个人 Agent 工作流

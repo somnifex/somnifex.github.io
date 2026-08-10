@@ -254,6 +254,6 @@ Provide a plan first, then implement after confirmation.
 
 ## 下一步
 
-- [术语表](./glossary/) — 术语表
+- [术语表](../glossary/) — 术语表
 
 > 这一页是查询用的，不是阅读用的。遇到具体问题再翻相应表格。

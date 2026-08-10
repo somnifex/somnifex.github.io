@@ -154,5 +154,5 @@ OpenShell 是 NVIDIA 出品的策略化沙箱（policy-controlled sandbox），�
 
 ## 下一步
 
-- [模型与服务商](./models-providers/) — 模型与服务商配置
-- [自动化：cron / CI / RPC](./automation/) — 在容器/CI 里安全运行 Pi
+- [模型与服务商](../models-providers/) — 模型与服务商配置
+- [自动化：cron / CI / RPC](../automation/) — 在容器/CI 里安全运行 Pi

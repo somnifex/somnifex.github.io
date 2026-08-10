@@ -154,5 +154,5 @@ graph TD
 
 ## 下一步
 
-- [10 套开发工作流](./development-workflow/) — 把会话管理用到开发流程
-- [21 个提示模板](./prompt-engineering/) — 提示模板
+- [10 套开发工作流](../development-workflow/) — 把会话管理用到开发流程
+- [21 个提示模板](../prompt-engineering/) — 提示模板

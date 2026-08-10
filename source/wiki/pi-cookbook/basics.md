@@ -194,5 +194,5 @@ Pi 工作时，你也可以继续发消息：
 
 ## 下一步
 
-- [AGENTS.md 编写指南](./agents-md/) — 让 Pi 按你的规则工作
-- [工具：内置 / 只读 / 自定义](./tools/) — 内置工具与 read-only 模式
+- [AGENTS.md 编写指南](../agents-md/) — 让 Pi 按你的规则工作
+- [工具：内置 / 只读 / 自定义](../tools/) — 内置工具与 read-only 模式

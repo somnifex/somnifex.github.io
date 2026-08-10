@@ -106,5 +106,5 @@ graph TD
 
 ## 下一步
 
-- [安装 Pi](./installation/) — 安装 Pi
-- [奶奶模式：零门槛第一次对话](./beginner-mode/) — 零门槛第一次对话
+- [安装 Pi](../installation/) — 安装 Pi
+- [奶奶模式：零门槛第一次对话](../beginner-mode/) — 零门槛第一次对话

@@ -106,8 +106,8 @@ Pi 允许通过 **Extensions** 注册自定义工具，比如天气查询、公�
 
 详细见：
 
-- [扩展架构](./extensions/) — 扩展架构
-- [用 TypeScript 写自定义工具](./custom-tools/) — 写自定义工具
+- [扩展架构](../extensions/) — 扩展架构
+- [用 TypeScript 写自定义工具](../custom-tools/) — 写自定义工具
 
 ---
 
@@ -126,5 +126,5 @@ Pi 允许通过 **Extensions** 注册自定义工具，比如天气查询、公�
 
 ## 下一步
 
-- [安全：Trust ≠ Sandbox](./security/) — 安全：Trust ≠ Sandbox
-- [扩展架构](./extensions/) — 自定义工具与扩展
+- [安全：Trust ≠ Sandbox](../security/) — 安全：Trust ≠ Sandbox
+- [扩展架构](../extensions/) — 自定义工具与扩展

@@ -138,5 +138,5 @@ pi --tools read,grep,find,ls -p "We have a production issue: users report 500 er
 
 ## 下一步
 
-- [21 个提示模板](./prompt-engineering/) — 21 个提示模板
-- [45 个实战食谱](./recipes/) — 45 个实战食谱
+- [21 个提示模板](../prompt-engineering/) — 21 个提示模板
+- [45 个实战食谱](../recipes/) — 45 个实战食谱

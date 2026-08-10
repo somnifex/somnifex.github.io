@@ -134,5 +134,5 @@ Pi 每次执行操作前，会在屏幕上显示一行类似这样的提示：
 
 ## 下一步
 
-- [Pi 基础使用](./basics/) — 学会更多基础命令（@文件、!命令、模型切换）
-- [安全：Trust ≠ Sandbox](./security/) — 安全基础：Trust ≠ Sandbox
+- [Pi 基础使用](../basics/) — 学会更多基础命令（@文件、!命令、模型切换）
+- [安全：Trust ≠ Sandbox](../security/) — 安全基础：Trust ≠ Sandbox
