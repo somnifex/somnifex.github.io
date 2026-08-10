@@ -10,7 +10,7 @@ site_tree:
   # -- 列表类页面 -- #
   # 主页配置
   home:
-    leftbar: welcome, recent, tagcloud
+    leftbar: welcome, wiki, recent, tagcloud
     rightbar: [timeline]
     per_page: 20
   # -- 内容类页面 -- #
