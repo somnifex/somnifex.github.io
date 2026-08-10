@@ -1,0 +1,150 @@
+######## Sidebar ########
+logo:
+  avatar: '[{config.avatar}](/about/)' # you can set avatar link in _config.yml or '[https://xxx.png](/about/)'
+  title: '[{config.title}](/)' # you can set html tag like: '[<img no-lazy height="32px" src="xxx"/>](/)'
+  subtitle: 'Code is cheap | Show me ur prompt' # '文字1 | 文字2' (鼠标放上去会切换到文字2)
+
+######## Main ########
+# 站点主结构树
+site_tree:
+  # -- 列表类页面 -- #
+  # 主页配置
+  home:
+    leftbar: welcome, recent, tagcloud
+    rightbar: [timeline]
+    per_page: 20
+  # -- 内容类页面 -- #
+  # 博客文章内页配置
+  post:
+    menu_id: post # 未在 front-matter 中指定 menu_id 时，layout 为 post 的页面默认使用这里配置的 menu_id
+    leftbar: [related, recent, tagcloud, timeline] # for pages using 'layout:post'
+    rightbar: [ghrepo, toc]
+  # 作者信息配置
+  author: 
+    base_dir: author # 只影响自动生成的页面路径
+    menu_id: post
+    leftbar: recent, tagcloud
+    rightbar: [timeline]
+  # 错误页配置
+  error_page:
+    menu_id: post
+    '404': '/404.html'
+    leftbar: recent, tagcloud
+    rightbar: [timeline]
+
+######## Article ########
+article:
+  # 分享
+  share: [wechat, weibo, email, link]
+  # 相关文章，需要安装插件 (for layout: post)
+  # npm i hexo-related-popular-posts
+  related_posts:
+    enable: true
+    max_count: 5
+
+search:
+  service: local_search # local_search, todo...
+  local_search: # 在 front-matter 中设置 indexing:false 来避免被搜索索引
+    field: all # post, page, all
+    path: /search.json # 搜索文件存放位置
+    content: true # 是否搜索内容
+
+
+######## Comments ########
+comments:
+  service: giscus # beaudar, utterances, giscus, twikoo, waline, artalk
+  # giscus
+  # https://giscus.app/zh-CN
+  giscus:
+    data-repo: somnifex/blogComment # [在此输入仓库]
+    data-repo-id: R_kgDOK_D5qw # [在此输入仓库 ID]
+    data-category: Announcements # [在此输入分类名]
+    data-category-id: DIC_kwDOK_D5q84CcFu0
+    data-mapping: og:title
+    data-strict: 0
+    data-reactions-enabled: 1
+    data-emit-metadata: 0
+    data-input-position: top # top, bottom
+    data-theme: preferred_color_scheme
+    data-lang: zh-CN
+    data-loading: lazy
+    crossorigin: anonymous
+
+######## Footer ########
+footer:
+  social:
+    github:
+      icon: '<img src="https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.9/social/08a41b181ce68.svg"/>'
+      url: https://github.com/somnifex
+    # music:
+    #   icon: '<img src="https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.9/social/3845874.svg"/>'
+    #   url: /
+    # unsplash:
+    #   icon: '<img src="https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.9/social/3616429.svg"/>'
+    #   url: /
+    # comments:
+    #   icon: '<img src="https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.9/social/942ebbf1a4b91.svg"/>'
+    #   url: /about/#comments
+  sitemap:
+    '博客':
+      - '[近期](/)'
+      - '[标签](/tags)'
+      # - '[标签](/)'
+      - '[归档](/archives)'
+    # '项目':
+    #   - '[开源库](/)'
+    # '社交':
+    #   - '[友链](/)'
+    #   - '[留言板](/)'
+    '更多':
+      - '[关于本站](/about)'
+      - '[GitHub](https://github.com/somnifex)'
+  content: | # 支持 Markdown 格式
+    本站由 [{author.name}](/) 使用 [{theme.name} {theme.version}]({theme.tree}) 主题创建。
+    <p>本站由 <a href="https://www.upyun.com/?utm_source=lianmeng&utm_medium=referral" target="_blank"><img src="https://i.096899.xyz/1729389797-又拍云_logo5(1).png" alt="又拍云" style="height: 1.8em; vertical-align: middle;"></a> 提供CDN加速/云存储服务</p>
+    <p>本站所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="license">CC BY-NC-SA 4.0</a> 许可协议，转载请注明出处。</p> 
+
+
+######## Tag Plugins ########
+tag_plugins:
+  checkbox:
+    interactive: true # enable interactive for user
+    # {% image %}
+  image:
+    fancybox: true # true, false
+######## JS Plugins ########
+plugins:
+  ## required plugins ##
+  ## optional plugins ##
+  # Katex - The fastest math typesetting library for the web
+  # https://katex.org/docs/autorender.html
+  # https://github.com/KaTeX/KaTeX
+  # 使用 hexo-renderer-markdown-it-plus 作为公式渲染器：npm uninstall hexo-renderer-marked --save npm install hexo-renderer-markdown-it-plus --save
+  katex:
+    enable: true #true # 可以在特定文章的 front-matter 中设置 katex: true 来开启，也可以在这里设置全局开启
+    inject: |
+      <link rel="stylesheet" href="https://gcore.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css" integrity="sha384-vKruj+a13U8yHIkAyGgK1J3ArTLzrFGBbBc0tDp4ad/EyewESeXE/Iv67Aj8gKZ0" crossorigin="anonymous">
+  # MathJax
+  # 需在Markdown文件开头加入mathjax: true
+  # Pandoc为可选项！
+  # 推荐使用Pandoc: npm uninstall hexo-renderer-marked --save & npm install hexo-renderer-pandoc --save
+  mathjax:
+    v3: true # 若使用 v3，需將 js 設置為 https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js
+    enable: # true # 可以在特定文章的 front-matter 中设置 mathjax: true 来开启，也可以在这里设置全局开启
+    js: https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js
+    # js: https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.6/MathJax.js?config=TeX-AMS-MML_HTMLorMML
+
+style:
+  codeblock:
+    scrollbar: 4px
+    highlightjs_theme: https://gcore.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/atom-one-dark.min.css
+  leftbar:
+    # 可以设置：纯色/渐变色/图片作为背景
+    background: 'hsl(212 16% 98%)'
+    # background-image: url(https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.13/image/sidebar-bg1@small.jpg)
+    blur-px: 100px
+    blur-bg: var(--alpha60)
+
+default:
+  avatar: /favicon.png
+  banner: /202309171556714.png
