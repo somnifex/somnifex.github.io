@@ -9,8 +9,8 @@ tags:
   - Coding Agent
   - 教程
 
-icon: img/wiki/pi-coding-agent.png
-cover: img/wiki/pi-coding-agent.svg
+icon: /img/wiki/pi-coding-agent.png
+cover: /img/wiki/pi-coding-agent.svg
 # 项目简介：用于卡片和 meta 描述
 description: |
   基于 Pi 官方文档与社区资源编写的实用指南，覆盖安装、新手入门、AGENTS.md、工具、安全、模型与会话、扩展与自定义工具、多 Agent、自动化、调试、最佳实践、45 个实战食谱与速查表。

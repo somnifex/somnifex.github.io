@@ -4,8 +4,8 @@ name: claude-code-cookbook
 title: Claude Code Cookbook
 subtitle: '从第一次安装到企业级 Agent 基础设施的系统学习手册'
 tags: [Claude Code, Agent, 技术文档]
-icon: img/wiki/claudecode-color.png
-cover: img/wiki/claudecode-color.svg
+icon: /img/wiki/claudecode-color.png
+cover: /img/wiki/claudecode-color.svg
 description: 面向小白到 Platform Engineer 的 Claude Code 系统学习、日常手册、Agent Engineering 与企业部署参考。内容以 Claude Code 官方文档为准。
 base_dir: wiki/claude-code-cookbook/
 coverpage: true
