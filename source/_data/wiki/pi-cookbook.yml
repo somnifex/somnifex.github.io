@@ -8,9 +8,9 @@ tags:
   - Pi
   - Coding Agent
   - 教程
-# icon: /assets/wiki/pi-cookbook.svg
-# cover: /assets/wiki/pi-cookbook-cover.svg
 
+icon: img/wiki/pi-coding-agent.png
+cover: img/wiki/pi-coding-agent.svg
 # 项目简介：用于卡片和 meta 描述
 description: |
   基于 Pi 官方文档与社区资源编写的实用指南，覆盖安装、新手入门、AGENTS.md、工具、安全、模型与会话、扩展与自定义工具、多 Agent、自动化、调试、最佳实践、45 个实战食谱与速查表。
@@ -20,7 +20,9 @@ description: |
 repo: ''
 
 # 是否启用站内搜索
-search: true
+search:
+  filter: wiki/pi-cookbook/
+  placeholder: 在 Pi Cookbook 中搜索...
 
 # 页面所在目录（相对于 Hexo 站点 source/）。
 # 这里指向本项目里的 wiki/pi-cookbook/ 目录。
