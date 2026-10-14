@@ -12,8 +12,8 @@ tags:
   - 非负性
   - 概率分布
 
-comments: true
-toc: true
+comments:
+  enabled: true
 ---
 ## KL 散度简介
 

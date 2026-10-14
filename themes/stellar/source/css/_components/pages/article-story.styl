@@ -1,5 +1,9 @@
-.l_body[type=story] .md-text.content
-  --fsp: 'calc(%s + 1px)' % $fs-body
+body[data-article-style='story'] .md-text.content
+  --fs-content-base: 'calc(%s + 2px)' % var(--fs-root)
+  --fs-content: var(--fs-content-base)
+  --fsh2: 'calc(%s + 11px)' % var(--fs-content)
+  --fsh3: 'calc(%s + 7px)' % var(--fs-content)
+  --fsh4: 'calc(%s + 4px)' % var(--fs-content)
   --gap-p: 2rem
   >div.tag-plugin,>p>img
     margin-top: 2.4rem
@@ -18,42 +22,41 @@
         background: var(--accent)
       &:before,&:after
         color: white
-        font-weight: 700
+        font-weight: $fw-700
       &:before
         content: ''
         font-size: 0.5em
       &:after
         font-size: 0.25em
   h2:not([class])
-    &:before,&:after
-      content: ''
-      display: inline-block
-      width: 12px
-      height: 1.2em
-      background: $c-accent
-      transform: skewX(-20deg)
-      margin: 0 0.5em
-      vertical-align: top
-      position: relative
+    story-title()
 
   h3:not([class])
     position: relative
+    width: fit-content
+    max-width: 80%
+    box-sizing: border-box
+    padding-inline: 1.68em
     &:before,&:after
       position absolute
+      top: 50%
+      transform: translateY(-50%)
       font-size: 1.2em
       background-color: x-theme-alpha(0.5)
       width: 1em
-      height: 1em
+      height: 100%
       content: ''
       opacity 1
-      display: inline-block
       trans1 all
-      vertical-align: middle
     &:before
-      margin-left: -1em
-      svg-mask-icon($iH3Left)
+      left: 0
+      svg-mask-icon(var(--icon-h3-left))
     &:after
-      svg-mask-icon($iH3Right)
+      right: 0
+      svg-mask-icon(var(--icon-h3-right))
+    &:before,&:after
+      -webkit-mask-size: 100% 100%
+      mask-size: 100% 100%
 
   h4:not([class])
     position: relative
@@ -76,30 +79,31 @@
       background: x-theme-alpha(1)
 
   ol,ul
-    margin-left: 'calc(%s * 2)' % var(--fsp)
+    margin-left: 'calc(%s * 2)' % var(--fs-content)
   h1,h2,h3,h4,h5,h6
     text-align: center
     margin: 2em 0 1.5em
     >a:first-child
       display: none
 
+  h2:not([class]),h3:not([class])
+    margin-inline: auto
+
   // 取消缩进效果
   .poetry, .okr, .timeline, li, .article-footer
     p:not([class])
       text-indent: 0
-      text-align: convert(hexo-config('style.text-align'))
+      text-align: convert(hexo-config('appearance.typography.content_align'))
 
   p>img, .tag-plugin.image .image-bg
     border-radius: $border-image-l
-    corner-shape: superellipse(1.2)
     >img
       border-radius: $border-image-l
-      corner-shape: superellipse(1.2)
 
 
-.l_body[type=story] .md-text.content>blockquote, .md-text.content .tag-plugin.blockquote
+body[data-article-style='story'] .md-text.content>blockquote, .md-text.content .tag-plugin.blockquote
   text-align: center
-  --inset: calc(var(--fsp) * 2)
+  --inset: calc(var(--fs-content) * 2)
   margin-left: var(--inset)
   margin-right: var(--inset)
   background: var(--block)
@@ -117,24 +121,24 @@
     trans1 all
   &:before
     left: -0.3em
-    svg-mask-icon($iQuoteLeft)
+    svg-mask-icon(var(--icon-quote-left))
   &:after
     right: -0.3em
-    svg-mask-icon($iQuoteRight)
+    svg-mask-icon(var(--icon-quote-right))
   p:not([class])
     color: var(--text-p2)
-    font-size: $fs-body
+    font-size: var(--fs-content)
     text-indent: 2em
   &:hover
     &:before,&:after
       background-color: x-theme-alpha(0.5)
 
 
-.l_body[type=story] .article.banner .content .bottom.only-title
+body[data-article-style='story'] .article.banner .content .bottom.only-title
   justify-content: center
 
 
-.l_body[text-indent] .tag-plugin.tabs .tab-content .tab-pane>p:not([class])
-  text-indent: 'calc(%s * 2)' % var(--fsp)
+body[data-text-indent] .tag-plugin.tabs .tab-content .tab-pane>p:not([class])
+  text-indent: 'calc(%s * 2)' % var(--fs-content)
   a
     text-indent: 0

@@ -1,9 +1,5 @@
 ---
-wiki: pi-cookbook
 title: 45 个实战食谱
-seo_title: 45 个实战食谱
-group: "🟡 进阶使用"
-order: 20
 ---
 
 > 🟡 Builder 进阶 | 45 条按场景分类的 Pi 命令片段。多数是 `pi -p "..."` 或 `pi --tools read,grep,find,ls -p "..."` 的一行调用——把它们存成 shell alias、prompt template 或者写进 AGENTS.md 都行。

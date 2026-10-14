@@ -3,7 +3,7 @@
  * 格式与官方标签插件一致使用空格分隔，中括号内的是可选参数（中括号不需要写出来）
  *
  * quot:
- * {% quot [el:h2] [icon:default] [prefix:icon] text [suffix:icon] %}
+ * {% quot [el:h2] [icon:variant/key] [color:color] [prefix:icon] text [suffix:icon] %}
  *
  */
 
@@ -11,13 +11,13 @@
 
 module.exports = ctx => function (args) {
   var el = ''
-  args = ctx.args.map(args, ['el', 'icon', 'prefix', 'suffix'], ['text'])
+  args = ctx.args.map(args, ['el', 'icon', 'color', 'prefix', 'suffix'], ['text'])
   if (!args.el) {
     args.el = 'p'
   }
 
   function content() {
-    const cfg = ctx.theme.config.tag_plugins.quot[args.icon || 'default']
+    const cfg = ctx.stellar.config.tags.quot[args.icon || 'default']
     var el = ''
     var prefix = null
     var suffix = null
@@ -29,15 +29,25 @@ module.exports = ctx => function (args) {
       // yml中配置的样式
       prefix = cfg?.prefix
       suffix = cfg?.suffix
+      if (!cfg && args.icon && ctx.stellar.data.icons?.[args.icon]) {
+        prefix = args.icon
+      }
+    }
+    function icon(key, position) {
+      const result = ctx.utils.icon(key, `class="icon ${position}"`)
+      if (!args.color) {
+        return result
+      }
+      return `<span class="quot-icon colorful" ${ctx.args.joinTags(args, ['color']).join(' ')}>${result}</span>`
     }
     if (prefix) {
-      el += ctx.utils.icon(prefix, 'class="icon prefix"')
+      el += icon(prefix, 'prefix')
     } else {
       el += `<span class="empty"></span>`
     }
     el += `<span class="text">${args.text}</span>`
     if (suffix) {
-      el += ctx.utils.icon(suffix, 'class="icon prefix"')
+      el += icon(suffix, 'suffix')
     } else {
       el += `<span class="empty"></span>`
     }

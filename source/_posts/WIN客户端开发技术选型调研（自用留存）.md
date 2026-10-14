@@ -9,8 +9,8 @@ tags:
   - 框架选型
   - 跨平台桌面应用
   - 无用信息
-comments: true
-toc: true
+comments:
+  enabled: true
 ---
 >最近在做项目的时候需要为软件Demo选择一个开发技术栈，遂进行了初步调研，保存以供后续参考
 ## 跨平台桌面应用框架对比

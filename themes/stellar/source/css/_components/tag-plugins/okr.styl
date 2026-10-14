@@ -1,10 +1,8 @@
 .md-text .tag-plugin.okr
   position: relative
   border-radius: $border-card
-  corner-shape: superellipse(1.2)
   background: var(--theme-block)
-  if hexo-config('tag_plugins.okr.border') == true
-    border: 1px solid var(--theme-border)
+  border: 1px solid var(--theme-border)
   overflow: hidden
   color: var(--text-p1)
   line-height: 1.5
@@ -24,10 +22,10 @@
         font-size: $fs-14
 
   .title
-    font-weight: 600
+    font-weight: $fw-600
     display: block
   .note
-    font-weight: 400
+    font-weight: $fw-400
     display: block
     margin-top: 0.5rem
     >p,>ul
@@ -105,10 +103,12 @@
 
 @media screen and (max-width: $device-mobile-max)
   .tag-plugin.okr .okr-item
-    grid-template-columns: 2.8rem auto 50px
+    grid-template-columns: 2.8rem auto 60px
     grid-column-gap: 0.5rem
     padding: 0.5rem
     .okr-left .title
       padding: 0 0.25rem
+    .labels
+      justify-content: flex-end
     .label
       txt-ellipsis()

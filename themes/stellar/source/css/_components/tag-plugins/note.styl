@@ -2,23 +2,22 @@
   position: relative
   padding: 0.25rem 1rem
   border-radius: $border-card
-  corner-shape: superellipse(1.2)
   background: var(--theme-block)
   overflow: hidden
-  if hexo-config('tag_plugins.note.border') == true
+  if hexo-config('tags.note.border') == true
     border: 1px solid var(--theme-border)
   color: var(--text-p1)
   >.title
-    --fsp: $fsp1
-    font-size: var(--fsp)
+    --fs-content: $fs-content-1
+    font-size: var(--fs-content)
     line-height: 1.5
     margin-top: var(--gap-p-compact)
-    font-weight: 500
+    font-weight: $fw-500
     color: var(--text)
   >.body
     &,p
-      --fsp: $fsp2
-      font-size: var(--fsp)
+      --fs-content: $fs-content-2
+      font-size: var(--fs-content)
       line-height: 1.5
     margin-top: var(--gap-p-compact)
     margin-bottom: var(--gap-p-compact)
@@ -65,5 +64,5 @@
 .md-text .tag-plugin .tag-plugin.note
   --gap-p: 1rem
 
-.l_body[type=story] .tag-plugin.note .title p:not([class])
+body[data-article-style='story'] .tag-plugin.note .title p:not([class])
   text-indent: 0

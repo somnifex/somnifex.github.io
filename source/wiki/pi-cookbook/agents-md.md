@@ -1,9 +1,5 @@
 ---
-wiki: pi-cookbook
 title: AGENTS.md 编写指南
-seo_title: AGENTS.md 编写指南
-group: "🟡 进阶使用"
-order: 5
 ---
 
 > 🟡 Builder 必读 | AGENTS.md 是给 AI 看的项目 README——把它写进项目根目录，Pi 启动时会自动把它加载进系统提示，免去每次重复说明。

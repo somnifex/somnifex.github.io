@@ -9,10 +9,10 @@ tags:
   - 注意力
   - 深度学习
   - 神经网络
-  - self-attention
+  - Self-Attention
 
-comments: true
-toc: true
+comments:
+  enabled: true
 ---
 ## 记忆模块核心
 

@@ -1,11 +1,12 @@
 ---
-wiki: claude-code-cookbook
 title: 更新 Agent（维护参考）
 date: 2026-08-11 00:00:00
 tags: [Claude Code, 维护, 备份]
-category: wiki
-mermaid: true
-noindex: true
+render:
+  diagrams: mermaid
+robots: noindex, nofollow
+visibility:
+  listed: false # 不在目录/列表中展示（仅作为直达页面）
 ---
 
 > 这是 cookbook 的**维护/更新 Agent** 备份文章。它不会被左侧目录（tree）索引，仅作为作者更新时自行参考的备份。

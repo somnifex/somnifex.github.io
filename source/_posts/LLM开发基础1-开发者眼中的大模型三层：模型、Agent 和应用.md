@@ -9,8 +9,8 @@ tags:
   - 软件工程
   - AI编程
   - 上下文管理
-comments: true
-toc: true
+comments:
+  enabled: true
 ---
 
 两年前大家聊大模型，话题基本是 ChatGPT 能答什么题、能写什么代码。现在聊的是 Claude Code 能不能自动修 bug、Cursor 的 tab 补全准不准。讨论的重心从模型本身移到了工具和行为上。有个场景很能说明问题。一个后端工程师试了某款 CLI Agent，让它改几行代码，Agent 把文件路径搞错了，还引入了一个不存在的 import。工程师的结论是这大模型不行。但他用的底层模型是 Claude Opus 4.8，单独让它写那段代码完全没问题。问题出在中间层，Agent 检索文件时用了错误的关键词，模型根本没看到正确的上下文。

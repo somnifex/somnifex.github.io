@@ -3,7 +3,6 @@
   padding-left: 16px
   p>img
     border-radius: $border-image-s
-    corner-shape: superellipse(1.2)
   &:before
     content: ''
     position: absolute
@@ -18,13 +17,12 @@
     padding-left: 0
     &:before
       display: none
-.l_body[type=story] .md-text.content 
+body[data-article-style='story'] .md-text.content
   .tag-plugin.timeline
     ol,ul
       margin-left: 0
     p>img
       border-radius: $border-image-s
-      corner-shape: superellipse(1.2)
 
 .tag-plugin.timeline .timenode
   position: relative
@@ -56,12 +54,12 @@
   margin: 0.25rem 0
   font-size: $fs-13
   a.user-info span
-    font-weight: 600
+    font-weight: $fw-600
   .user-info 
     display: flex
     align-items: center
     font-size: $fs-13
-    font-weight: 500
+    font-weight: $fw-500
     color: var(--text-p1)
     margin-right: 8px
     line-height: 1
@@ -74,7 +72,7 @@
       margin: 0 4px 0 0
       object-fit: contain
   &,span
-    font-weight: 500
+    font-weight: $fw-500
     color: var(--text-p3)
     line-height: 1
   &:before
@@ -93,13 +91,12 @@
 .tag-plugin.timeline .body
   background: var(--card)
   border-radius: 16px
-  corner-shape: superellipse(1.2)
   border-top-left-radius: 2px
   padding: 0.5rem 1rem
   margin-top: 4px
   box-shadow: $boxshadow-block
   p
-    --fsp: $fsp1
+    --fs-content: $fs-content-1
     img  
       display: block
   &:empty
@@ -115,19 +112,26 @@
     color: var(--text-p1)
     line-height: 1.25
     padding: 0.75rem 1rem
-    --fsp: $fsp1
-    font-size: var(--fsp)
+    --fs-content: $fs-content-1
+    font-size: var(--fs-content)
+  &.ds-artalk .body
+    img
+      max-height: 1.5em
+      max-width: 100%
+      vertical-align: bottom
+      margin: 0 2px
+      border-radius: 4px
 
 
 .tag-plugin.timeline[data-api] .body
   p.title
-    font-weight: 700
+    font-weight: $fw-700
     margin: 0.5rem 0 0.75rem
     line-height: 1.25
     border-bottom: 1px solid var(--block-border)
     &:only-child 
       margin-bottom: 0.5rem
-      font-weight: 500
+      font-weight: $fw-500
     a 
       color: inherit
       text-decoration: none
@@ -150,7 +154,6 @@
   .lazy-box
     margin: .5rem 0
     border-radius: $border-image
-    corner-shape: superellipse(1.2)
     >img
       margin: 0 auto
 
@@ -159,13 +162,12 @@
 
 aside .tag-plugin.timeline[data-api] .body .lazy-box
   border-radius: $border-image-s
-  corner-shape: superellipse(1.2)
 
 .tag-plugin.timeline[data-api] .body .footer
   margin: 0 0 -0.5rem
   padding: 0.5rem 0 1rem
   user-select: none
-  font-weight: 500
+  font-weight: $fw-500
   display: flex
   flex-wrap: wrap
   justify-content: space-between
@@ -192,6 +194,10 @@ aside .tag-plugin.timeline[data-api] .body .lazy-box
     display: flex 
     align-items: center
     border-color: var(--link)
+    svg
+      width: 1em
+      height: 1em
+      vertical-align: -0.125em
     &:first-child 
       margin-left: 0
     &:last-child 
@@ -212,7 +218,7 @@ aside .tag-plugin.timeline[data-api] .body .lazy-box
   padding: 0 0.5rem
   margin: 0.75rem 0
   p
-    --fsp: $fsp2
+    --fs-content: $fs-content-2
     margin: 0.25rem
 
 .tag-plugin.timeline .body

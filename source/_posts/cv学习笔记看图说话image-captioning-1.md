@@ -11,8 +11,8 @@ tags:
   - 自然语言
   - 计算机视觉
 
-comments: true
-toc: true
+comments:
+  enabled: true
 ---
 ## Background
 

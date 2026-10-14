@@ -11,8 +11,8 @@ tags:
   - mini-batch
   - 偏导数
 
-comments: true
-toc: true
+comments:
+  enabled: true
 ---
 ## 梯度下降法
 

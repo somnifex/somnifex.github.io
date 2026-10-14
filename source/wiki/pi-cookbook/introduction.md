@@ -1,9 +1,5 @@
 ---
-wiki: pi-cookbook
 title: 引言：Pi 是什么
-seo_title: 引言：Pi 是什么
-group: "🟢 新手入门"
-order: 1
 ---
 
 > 🟢 新手起点 | 本章不讲命令，只讲“Pi 到底能干什么、不能干什么”。

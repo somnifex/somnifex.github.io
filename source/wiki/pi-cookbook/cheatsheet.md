@@ -1,9 +1,5 @@
 ---
-wiki: pi-cookbook
 title: 速查表
-seo_title: 速查表
-group: "🟡 进阶使用"
-order: 21
 ---
 
 > 一页纸 | 最常用的 Pi 命令、配置、API、技巧。

@@ -11,8 +11,8 @@ tags:
   - docker
   - 连接
 
-comments: true
-toc: true
+comments:
+  enabled: true
 ---
 ## 基本情况
 ~服务器目前拥有两台GPU，分别为:~ </br>

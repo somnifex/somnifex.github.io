@@ -1,11 +1,9 @@
 code
-  -webkit-font-smoothing: auto
   -moz-osx-font-smoothing: auto
   font-family: $ff-code
 
 p>code:not([class]),li>code:not([class])
   font-size: $fs-code
-  background: var(--block)
   padding: .2em
   border-radius: 4px
   color: var(--text-code)
@@ -14,9 +12,7 @@ p>code:not([class]),li>code:not([class])
   --theme: var(--text-p3)
   margin: var(--gap-p) 0
   border-radius: $border-card
-  corner-shape: superellipse(1.2)
   overflow: hidden
-  background: var(--block)
   font-family: $ff-codeblock
   box-sizing: border-box
   @media screen and (min-width: $device-mobile)
@@ -29,7 +25,7 @@ p>code:not([class]),li>code:not([class])
   figcaption
     color: var(--text-p2)
     font-size: $fs-codeblock
-    font-weight: 500
+    font-weight: $fw-500
     margin-left: 0.5rem
     display: inline-block
     span
@@ -37,7 +33,6 @@ p>code:not([class]),li>code:not([class])
       display: block
       border-bottom-left-radius: $border-button
       border-bottom-right-radius: $border-button
-      background: var(--block)
   >table
     overflow: auto
     display: block
@@ -48,7 +43,7 @@ p>code:not([class]),li>code:not([class])
     margin: 0 !important
     background: transparent
     border: none
-    scrollbar-codeblock(convert(hexo-config('style.codeblock.scrollbar')))
+    scrollbar-codeblock(convert(hexo-config('appearance.code_block.scrollbar_width')))
     tr
       background: transparent
       border: none
@@ -78,18 +73,17 @@ p>code:not([class]),li>code:not([class])
 
 .md-text .gist 
   .gist-file 
-    border: 1px solid var(--block-border)
+    border-style: solid
+    border-width: 1px
     border-radius: $border-card
-    corner-shape: superellipse(1.2)
     overflow: hidden
   .gist-data
-    --bgColor-default: var(--block)
-    border-bottom: 1px solid var(--block-border)
+    border-bottom-style: solid
+    border-bottom-width: 1px
   .highlight
     display: inherit
     border: none
     border-radius: 0
-    background: var(--block)
     margin: 0
     padding: 1em 0
     pre
@@ -97,10 +91,6 @@ p>code:not([class]),li>code:not([class])
   .blob-code-inner
     color: var(--text-p1)
     font-family: $ff-codeblock
-  .gist-meta
-    background: var(--block)
-
-
 table:not([class])
   border-collapse: collapse
 
@@ -123,7 +113,7 @@ table:not([class])
       right: 0
       padding: 4px 0.5rem
       opacity: .25
-      font-weight: 700
+      font-weight: $fw-700
       color: var(--theme)
 
   &.yaml .code:before

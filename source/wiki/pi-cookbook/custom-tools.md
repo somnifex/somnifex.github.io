@@ -1,9 +1,5 @@
 ---
-wiki: pi-cookbook
 title: 用 TypeScript 写自定义工具
-seo_title: 用 TypeScript 写自定义工具
-group: "🔴 高级与扩展"
-order: 13
 ---
 
 > 🔴 开发者章节 | 当 `read / write / edit / bash` 不够用时，自定义工具是第一个想到的扩展方式。本章讲怎么写一个能被 LLM 调用、并把结果安全地喂回上下文的工具。

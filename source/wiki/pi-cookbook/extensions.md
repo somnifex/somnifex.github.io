@@ -1,9 +1,5 @@
 ---
-wiki: pi-cookbook
 title: 扩展架构
-seo_title: 扩展架构
-group: "🔴 高级与扩展"
-order: 12
 ---
 
 > 🔴 开发者章节 | 扩展是 Pi 留出来的"可编程接缝"——TypeScript 文件，可以监听事件、注册工具 / 命令 / Provider、修改 UI、拦截工具调用。比 Pi 内置的工具集更广，能做内置功能刻意没做的事。

@@ -1,9 +1,5 @@
 ---
-wiki: pi-cookbook
 title: 多 Agent 编排
-seo_title: 多 Agent 编排
-group: "🔴 高级与扩展"
-order: 15
 ---
 
 > 🔴 开发者章节 | Pi 官方明确不在内置功能里包含 sub-agent / agent group（见 [Design Principles](https://pi.dev/docs/latest/usage)）。这一章列出来的是"在没有官方 sub-agent 的前提下，用 Pi 的现有能力拼出来的多 Agent 模式"——能工作，但协调层都得你自己写或自己跑。

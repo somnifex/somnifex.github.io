@@ -1,6 +1,9 @@
 .tag-plugin.grid
   display: grid
   grid-gap: 16px
+  >.cell > .tag-plugin:only-child
+    margin-top: 0
+    margin-bottom: 0
   &[bg]>.cell>
     p   
       line-height: 1.5
@@ -17,7 +20,6 @@
   &[bg]>.cell
     padding: 1rem
     border-radius: $border-card
-    corner-shape: superellipse(1.2)
   &[bg='box']>.cell
     background: var(--block)
   &[bg='card']>.cell

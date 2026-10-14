@@ -11,8 +11,8 @@ tags:
   - AI
   - Software Development
   - Agent
-comments: true
-toc: true
+comments:
+  enabled: true
 ---
 ## Waterfall Model?!
 The waterfall model is a classic software development model, named for its process resembling a waterfall cascading down through stages. It divides the software development process into a series of fixed-sequence phases, each with clear inputs and outputs, and requiring completion of the previous phase before starting the next.

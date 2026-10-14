@@ -11,8 +11,8 @@ tags:
   - svd分解
   - 线性代数
 
-comments: true
-toc: true
+comments:
+  enabled: true
 ---
 ## 主要内容
 

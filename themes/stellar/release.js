@@ -8,9 +8,10 @@
  *   1. 解析版本号与参数（--dry-run / --yes / --help）
  *   2. 校验版本号格式、当前分支、工作区状态
  *   3. 校验 CHANGELOG.md 已包含该版本非空章节（内容由 AI/人工提前准备），否则终止
- *   4. 更新 _config.yml（stellar.version）与 package.json（version）
- *   5. 输出变更摘要与 diff，正式模式执行前二次确认
- *   6. dry-run 或取消时从内存恢复文件，不依赖 git checkout --
+ *   4. 准备 package.json、package-lock.json 与安装知识库的最终版本内容
+ *   5. 在最终待提交状态执行质量检查
+ *   6. 输出变更摘要与 diff，正式模式执行前二次确认
+ *   7. dry-run、取消或质量检查失败时从内存恢复文件，不依赖 git checkout --
  *
  * 说明：不放在 scripts/ 目录，因为主题的 scripts/ 是 Hexo 运行时插件目录，
  * 会被所有使用该主题的站点在构建时加载执行。
@@ -22,8 +23,13 @@ const readline = require('readline');
 const { execFileSync } = require('child_process');
 
 const ROOT = __dirname;
-const VERSION_RE = /^\d+\.\d+\.\d+(-rc\.\d+)?$/;
-const ALLOWED_FILES = new Set(['_config.yml', 'package.json', 'CHANGELOG.md']);
+const SEMVER_RE = /^\d+\.\d+\.\d+(?:-(?:alpha|beta|rc)\.\d+)?$/;
+const RELEASE_VERSION_RE = /^\d+\.\d+\.\d+(?:-rc\.\d+)?$/;
+const CHANGELOG_FILE = "CHANGELOG.md";
+const PACKAGE_LOCK_FILE = "package-lock.json";
+const INSTALLATION_FILE = "docs/knowledge/00-总览与安装配置/installation.md";
+const MANAGED_FILES = ["package.json", PACKAGE_LOCK_FILE, CHANGELOG_FILE, INSTALLATION_FILE];
+const WORKSPACE_ALLOWED_FILES = new Set(MANAGED_FILES);
 const WORKFLOW_URL = 'https://github.com/xaoxuu/hexo-theme-stellar/actions/workflows/npm-publish.yml';
 
 function usage() {
@@ -79,17 +85,27 @@ function currentBranch() {
 }
 
 function checkWorkspace() {
-  const changed = runGit(['diff', '--name-only', 'HEAD'])
-    .split('\n')
-    .map((line) => line.trim())
-    .filter(Boolean);
-  const extra = changed.filter((file) => !ALLOWED_FILES.has(file));
+  const changed = workspaceChangedFiles();
+  const extra = changed.filter((file) => !WORKSPACE_ALLOWED_FILES.has(file));
   if (extra.length > 0) {
     fail(
-      '工作区存在无关改动（含已暂存与未暂存），请先提交或暂存后再发版：\n' +
+      '工作区存在无关改动（含已暂存、未暂存与未跟踪文件），请先处理后再发版：\n' +
         extra.map((file) => `  ${file}`).join('\n')
     );
   }
+}
+
+function workspaceChangedFiles(root = ROOT) {
+  const commands = [
+    ['diff', '--name-only', '-z', 'HEAD'],
+    ['ls-files', '--others', '--exclude-standard', '-z'],
+  ];
+  const changed = commands.flatMap((args) =>
+    execFileSync('git', args, { cwd: root, encoding: 'utf8' })
+      .split('\0')
+      .filter(Boolean)
+  );
+  return [...new Set(changed)].sort();
 }
 
 function changeSummary() {
@@ -102,46 +118,102 @@ function changeSummary() {
   return log ? `(未找到 tag，展示最近 10 条提交)\n${log}` : '(无法获取提交记录)';
 }
 
-function updateConfigYml(version) {
-  const file = path.join(ROOT, '_config.yml');
-  const lines = fs.readFileSync(file, 'utf8').split('\n');
-  const stellarIdx = lines.findIndex((line) => /^stellar:\s*$/.test(line));
-  if (stellarIdx === -1) {
-    fail('未在 _config.yml 中找到 stellar: 配置块');
+function packageVersion(raw) {
+  let pkg;
+  try {
+    pkg = JSON.parse(raw);
+  } catch (_) {
+    throw new Error("package.json 解析失败，请检查文件格式");
   }
-  let versionIdx = -1;
-  for (let i = stellarIdx + 1; i < lines.length; i++) {
-    if (/^\S/.test(lines[i])) {
-      break; // 已越过 stellar 配置块
-    }
-    if (/^\s+version:/.test(lines[i])) {
-      versionIdx = i;
-      break;
-    }
+  if (typeof pkg.version !== "string" || !SEMVER_RE.test(pkg.version)) {
+    throw new Error("package.json 缺少有效的 version 字段");
   }
-  if (versionIdx === -1) {
-    fail('未在 stellar: 配置块中找到 version 字段');
-  }
-  lines[versionIdx] = lines[versionIdx].replace(/^(\s*version:).*$/, `$1 '${version}'`);
-  fs.writeFileSync(file, lines.join('\n'));
+  return pkg.version;
 }
 
-function updatePackageJson(version) {
-  const file = path.join(ROOT, 'package.json');
-  let raw;
-  try {
-    raw = fs.readFileSync(file, 'utf8');
-    JSON.parse(raw);
-  } catch (_) {
-    fail('package.json 解析失败，请检查文件格式');
+function updatedPackageJson(raw, previousVersion, version) {
+  if (packageVersion(raw) !== previousVersion) {
+    throw new Error(`package.json 的主题版本在准备过程中发生变化（预期 ${previousVersion}）`);
   }
   const lines = raw.split('\n');
   const idx = lines.findIndex((line) => /^\s*"version"\s*:/.test(line));
   if (idx === -1) {
-    fail('未在 package.json 中找到 version 字段');
+    throw new Error("未在 package.json 中找到 version 字段");
   }
-  lines[idx] = lines[idx].replace(/^(\s*"version"\s*:\s*).*$/, `$1"${version}",`);
-  fs.writeFileSync(file, lines.join('\n'));
+  const updatedLine = lines[idx].replace(
+    /^(\s*"version"\s*:\s*)"[^"]*"(\s*,?\s*)$/,
+    `$1"${version}"$2`
+  );
+  if (updatedLine === lines[idx] && previousVersion !== version) {
+    throw new Error("package.json 的 version 字段格式无法安全更新");
+  }
+  lines[idx] = updatedLine;
+  return lines.join('\n');
+}
+
+function updatedInstallation(raw, previousVersion, version) {
+  const knowledgeReplacements = raw.split(previousVersion).length - 1;
+  if (knowledgeReplacements === 0) {
+    throw new Error(`安装知识库中未找到当前主题版本 ${previousVersion}`);
+  }
+  return {
+    content: raw.split(previousVersion).join(version),
+    knowledgeReplacements,
+  };
+}
+
+function updatedPackageLock(raw, previousVersion, version) {
+  let lock;
+  try {
+    lock = JSON.parse(raw);
+  } catch (_) {
+    throw new Error("package-lock.json 解析失败，请检查文件格式");
+  }
+  if (lock.version !== previousVersion || lock.packages?.[""]?.version !== previousVersion) {
+    throw new Error(`package-lock.json 的根版本与 package.json 不一致（预期 ${previousVersion}）`);
+  }
+  lock.version = version;
+  lock.packages[""].version = version;
+  return `${JSON.stringify(lock, null, 2)}\n`;
+}
+
+function validateVersionFiles(root) {
+  const packageRaw = fs.readFileSync(path.join(root, "package.json"), "utf8");
+  const version = packageVersion(packageRaw);
+  updatedPackageLock(fs.readFileSync(path.join(root, PACKAGE_LOCK_FILE), "utf8"), version, version);
+  const installation = updatedInstallation(
+    fs.readFileSync(path.join(root, INSTALLATION_FILE), "utf8"),
+    version,
+    version
+  );
+  return { version, knowledgeReferences: installation.knowledgeReplacements };
+}
+
+function prepareVersionFiles(root, version) {
+  assertReleaseVersion(version);
+  const packagePath = path.join(root, "package.json");
+  const packageLockPath = path.join(root, PACKAGE_LOCK_FILE);
+  const installationPath = path.join(root, INSTALLATION_FILE);
+  const packageRaw = fs.readFileSync(packagePath, "utf8");
+  const packageLockRaw = fs.readFileSync(packageLockPath, "utf8");
+  const installationRaw = fs.readFileSync(installationPath, "utf8");
+  const previousVersion = packageVersion(packageRaw);
+  const packageContent = updatedPackageJson(packageRaw, previousVersion, version);
+  const packageLockContent = updatedPackageLock(packageLockRaw, previousVersion, version);
+  const installation = updatedInstallation(installationRaw, previousVersion, version);
+
+  const updates = new Map([
+    [packagePath, packageContent],
+    [packageLockPath, packageLockContent],
+    [installationPath, installation.content],
+  ]);
+  for (const [file, content] of updates) {
+    fs.writeFileSync(file, content);
+  }
+  return {
+    previousVersion,
+    knowledgeReplacements: installation.knowledgeReplacements,
+  };
 }
 
 function extractVersionSection(text, version) {
@@ -161,28 +233,35 @@ function extractVersionSection(text, version) {
 }
 
 function hasNonEmptyChangelogSection(text, version) {
-  const section = extractVersionSection(text, version);
-  if (section === null || section === '') {
-    return false;
-  }
-  return section
-    .split('\n')
-    .map((line) => line.trim())
-    .some((line) => line !== '' && !line.startsWith('> 发布日期：'));
+  return releaseNotes(text, version).length > 0;
 }
 
-function backupFiles() {
+function releaseNotes(text, version) {
+  return (extractVersionSection(text, version) || '')
+    .split('\n')
+    .filter((line) => !line.trim().startsWith('> 发布日期：'))
+    .join('\n')
+    .trim();
+}
+
+function assertReleaseVersion(version) {
+  if (typeof version !== 'string' || !RELEASE_VERSION_RE.test(version)) {
+    throw new Error(`版本号格式不正确: ${version}（应为 x.y.z 或 x.y.z-rc.n；Alpha/Beta 仅为内部里程碑）`);
+  }
+}
+
+function backupFiles(root = ROOT) {
   const backups = new Map();
-  for (const file of ALLOWED_FILES) {
-    const full = path.join(ROOT, file);
+  for (const file of MANAGED_FILES) {
+    const full = path.join(root, file);
     backups.set(file, fs.existsSync(full) ? fs.readFileSync(full) : null);
   }
   return backups;
 }
 
-function restoreFiles(backups) {
+function restoreFiles(backups, root = ROOT) {
   for (const [file, content] of backups) {
-    const full = path.join(ROOT, file);
+    const full = path.join(root, file);
     if (content === null) {
       if (fs.existsSync(full)) {
         fs.unlinkSync(full);
@@ -209,6 +288,15 @@ function askInput(question) {
 
 function askConfirm(question) {
   return ask(question).then((answer) => /^\s*(y|yes)\s*$/i.test(answer));
+}
+
+function runPreflightCheck() {
+  console.log('\n>>> 执行发版前质量检查: npm run release:check（实现门禁 + 知识库核查）');
+  try {
+    execFileSync('npm', ['run', 'release:check'], { cwd: ROOT, stdio: 'inherit' });
+  } catch (_) {
+    throw new Error('release:check 未通过，已终止发版，请修复后再试');
+  }
 }
 
 async function main() {
@@ -254,9 +342,7 @@ async function main() {
     }
   }
 
-  if (!VERSION_RE.test(version)) {
-    fail(`版本号格式不正确: ${version}（应为 x.y.z 或 x.y.z-rc.n）`);
-  }
+  assertReleaseVersion(version);
 
   const branch = currentBranch();
   if (branch !== 'main') {
@@ -279,18 +365,22 @@ async function main() {
   const backups = backupFiles();
 
   try {
-    const changelogPath = path.join(ROOT, 'CHANGELOG.md');
+    const changelogPath = path.join(ROOT, CHANGELOG_FILE);
     const changelogText = fs.existsSync(changelogPath) ? fs.readFileSync(changelogPath, 'utf8') : '';
     if (!hasNonEmptyChangelogSection(changelogText, version)) {
-      restoreFiles(backups);
-      fail(`CHANGELOG.md 中缺少版本 ${version} 的非空章节，已终止发版（请先由 AI/人工补充该章节）`);
+      throw new Error(`CHANGELOG.md 中缺少版本 ${version} 的非空章节，已终止发版（请先由 AI/人工补充该章节）`);
     }
-    updateConfigYml(version);
-    updatePackageJson(version);
+    const prepared = prepareVersionFiles(ROOT, version);
+    console.log(
+      `>>> 已同步主题版本: ${prepared.previousVersion} → ${version}` +
+        `（安装知识库 ${prepared.knowledgeReplacements} 处）`
+    );
+
+    runPreflightCheck();
 
     console.log('>>> 文件变更:');
     runGit(['diff', '--stat'], { stdio: 'inherit' });
-    const diff = runGit(['diff', '--', '_config.yml', 'package.json', 'CHANGELOG.md']);
+    const diff = runGit(['diff', '--', ...MANAGED_FILES]);
     if (diff) {
       console.log(diff);
     }
@@ -314,8 +404,8 @@ async function main() {
       return;
     }
 
-    console.log('>>> git add _config.yml package.json CHANGELOG.md');
-    runGit(['add', '--', '_config.yml', 'package.json', 'CHANGELOG.md'], { stdio: 'inherit' });
+    console.log(`>>> git add ${MANAGED_FILES.join(' ')}`);
+    runGit(['add', '--', ...MANAGED_FILES], { stdio: 'inherit' });
     console.log(`>>> git commit -m "release: ${version}"`);
     runGit(['commit', '-m', `release: ${version}`], { stdio: 'inherit' });
     console.log('>>> git push origin main');
@@ -345,6 +435,11 @@ if (require.main === module) {
 }
 
 module.exports = {
+  assertReleaseVersion,
   extractVersionSection,
   hasNonEmptyChangelogSection,
+  releaseNotes,
+  prepareVersionFiles,
+  validateVersionFiles,
+  workspaceChangedFiles,
 };

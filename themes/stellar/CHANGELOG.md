@@ -1,5 +1,493 @@
 # Changelog
 
+## 2.0.0
+
+> 发布日期：2026-09-30
+
+### 新功能
+
+- 配置、Collection YAML 与页面 Front Matter 采用声明式严格 Schema，字段类型、枚举与未知字段在构建前由 Doctor 报告来源与字段路径。
+- Post、Topic、Wiki、Notebook、Note 与索引页共用同一内容模型与构建管线；`listed/searchable` 分别控制聚合展示与搜索收录，Article 与 Notebook 的列表、横幅、许可、分享、标签和排序默认值收敛到内容模型。
+- 页面外壳统一为 Topbar、Leftbar、Rightbar Region，Brand、Menu、Widget、Footer 和 13 个 Profile 使用结构化配置与明确的覆盖语义；Leftbar 菜单支持 1–5 列，Tree、Linklist、Related 与右栏目录支持折叠，右栏随左栏收起显示紧凑目录。
+- 新增 `card/glass/minimal/flat` 外观预设、明暗模式切换、颜色／渐变／排版／形状／背景设置，以及独立设置页。
+- 浏览器功能改为原生 ES 模块按需加载，搜索、评论、动态效果、数据服务与请求缓存拥有明确的加载、取消与卸载生命周期；共享脚本、样式与图标不再逐页内联。
+- 搜索改为注册式 provider（内置 `local` 与 `algolia`），入口位于 Leftbar Brand；本地搜索按章节组织结果并分批查询、渲染，浮层带开合转场与滚动条槽位补位，支持 `Command+K` / `Ctrl+K`。
+- Wiki Hero 支持图片与视频背景、滚动视差，以及 `galaxy`、`light-rays`、`ferrofluid`、`Strands` 可选效果；标签目录新增 `gist`。
+- 图片在 `hexo server` / `hexo generate` 时增量提取尺寸与 HSLA 平均色并持久缓存，补全生成 HTML 且不修改 Markdown 或原图；新增 `hexo stellar images`（含 `--dry-run/--page/--refresh`）。
+- 新增 `hexo stellar doctor` 与 `hexo stellar new note`；目录驱动的完整 Blueprint 改由 Stellar Examples 仓库维护。
+- 文章横幅背景、访客头像镜像 `services.gravatar.base_url`、Reveal 的 `duration/interval/distance/blur` 与卡片 Spotlight／Tilt 均可独立配置。
+
+### 行为与样式变化
+
+- 内容横幅与列表共用页面 `cover`；`article.banner.background`（默认 `true`）与 Front Matter `banner.background: false` 控制内容页横幅是否使用封面作为背景，关闭时只影响内容页，列表卡片、SEO 与分享仍使用 `cover`。博客列表页附加导航默认开启。
+- 笔记本总索引卡片复用 Wiki 卡片的封面与项目栏视觉：`listing.cover` 作为封面、`listing.headline` 只取显式配置的大标题、`listing.caption` 作为项目副标题，未配置封面时降级为纯色卡片。
+- 正文图片统一 `max-width: 100%` 与 `height: auto`，按原图比例约束高度；图片元数据只采集会被主题消费的图片，分享二维码、评论、侧边栏与页脚等页面框架图片不触发下载或写入缓存。
+- 侧栏集合、Navbar、Dropdown、Grid、文章卡片、下载按钮与 Topbar 对齐改用统一的形状与状态反馈；设置页、单选框、标题装饰、导航下划线、目录指示条与移动端留白一并收敛。
+- 运行环境升级为 Node.js 22+、Hexo 8+；源码读取兼容 Windows CRLF 与 BOM，避免 Front Matter 整体丢失。
+
+### 升级注意（配置变更与破坏性改动）
+
+- v1 的 `logo/menubar/site_tree/style/tag_plugins/plugins/data_services/search.service` 等结构不会被兼容读取；请按[公开迁移说明](https://xaoxuu.com/wiki/stellar/migration/v1-to-v2/)逐项迁移到 `topbar/leftbar/rightbar/footer/profiles/appearance/tags/features/services/search`。
+- Collection 与 Front Matter 需要迁移为 `collection/route/navigation/listing/visibility/banner/article/comments/render/seo` 等分组字段；页面 `banner.image` 改为顶层 `cover`，横幅不再使用独立比例配置。未知字段、错误类型与非法枚举会在构建早期失败。
+- 分享服务由 `[wechat, weibo, email, link]` 改为 `qrcode/weibo/x/telegram/whatsapp/email`，配置位置为 `article.footer.share` 或内容 `footer.share`。
+- `plugins.card_hover.enable` 改为独立的 `features.card_hover.spotlight` 与 `features.card_hover.tilt`，默认均为 `false`；`plugins.adaptive_text` 改为固定开启的内置行为。
+- Site Info、Rating、Vote 的服务 endpoint 默认留空，需要自行部署并填写地址；依赖这些服务的站点升级后请显式配置。
+- `features.partial_navigation.enabled` 与 `features.image_optimization.enabled` 默认开启，首次处理远程图片会增加构建时间；Hero 背景默认启用 0.2 强度视差，设为 0 关闭位移。
+- `about`、`users` 标签以及对应的 `chat_users.yml`、`fcircle` 适配器已移除；`tip` 改为单标签 `{% tip 词句 pop:注解 %}`，`quot` 支持直接图标键与 `color`。
+- 博客列表页附加导航 `profiles.blog_index.listing_nav.enabled` 默认开启；语言文件不再使用 `settings.profile.provider_managed` 与 `settings.profile.provider_unknown`。
+- 浏览器后处理必须原样保留 `public/js/runtime/**/*.js` 的 ESM 语义、相对 import 与 JavaScript MIME 类型。
+- v2 源码从仓库 `main` 安装并需要执行 `npm install --prefix themes/stellar`；npm 安装的版本以实际公开版本为准。
+
+Full Changelog: [1.44.0...2.0.0](https://github.com/xaoxuu/hexo-theme-stellar/compare/1.44.0...2.0.0)
+
+## 2.0.0-rc.6
+
+> 发布日期：2026-09-18
+
+本节记录从公开候选 `2.0.0-rc.5` 到 `2.0.0-rc.6` 最终文件树的净变化。
+
+### 新功能
+
+- Wiki Hero 新增视频背景 `hero.background.video`，静音循环自动播放，图片可用作 poster；设置视频时不加载动态效果。
+- Hero 新增滚动视差 `hero.background.parallax`，范围 0–1、默认 0.2，设为 0 关闭位移；图片与视频背景随滚动淡出，减少动态效果偏好下关闭视差位移。
+- 新增 Strands WebGL 背景效果，支持光带配色、形态、发光及玻璃折射参数。
+- Leftbar 新增 `menu_columns`，支持 1–5 列，默认 1；1–2 列显示图标与标题，3–5 列仅显示图标并保留无障碍名称。支持 Profile、Collection、Page 覆盖。
+- 新增 `services.gravatar.base_url`，侧栏与设置页共享访客头像镜像地址，默认 `https://gravatar.com/avatar/`；自定义服务需兼容 SHA-256 并包含 `/avatar/` 路径。
+
+### 修复与改进
+
+- 同集合页面切换等待超过 150ms 时显示加载反馈，完成、失败或取消后清理，快速切换不闪烁。
+- 修复目录活动指示条在 CSS 压缩后高度丢失的问题。
+- 中英文安装说明补充 Windows PowerShell Blueprint 安装命令。
+
+### 升级注意
+
+- 现有 Hero 背景默认启用 0.2 强度视差；如需关闭位移，显式设置 `hero.background.parallax: 0`。
+
+Full Changelog: [2.0.0-rc.5...2.0.0-rc.6](https://github.com/xaoxuu/hexo-theme-stellar/compare/2.0.0-rc.5...2.0.0-rc.6)
+
+## 2.0.0-rc.5
+
+> 发布日期：2026-09-12
+
+本节记录从公开候选 `2.0.0-rc.4` 到 `2.0.0-rc.5` 最终文件树的净变化。
+
+### 新功能
+
+- Leftbar Brand 支持 `ghrepo: owner/repo` 仓库统计，优先于 `ghuser`；搜索按钮移入 Brand，由 `leftbar.brand.search` 控制，默认开启。
+- 完善侧栏初始折叠状态，Tree、Linklist、Related 支持折叠栏；右栏随左栏收起显示紧凑目录，支持悬停和键盘焦点展开，目录活动指示条平滑跟随当前条目。
+- Reveal 支持 `duration/interval/distance/blur`，默认分别为 800ms、200ms、8px、4px，可配置依次播放、位移和模糊。
+
+### 修复与改进
+
+- 共享客户端配置、图标样式与置顶轮播脚本改为外部资源，集中处理图片失败回退，减少逐页重复 HTML；为 hexo-minify 排除原生 Runtime ESM，保留模块语义。
+- 评论在页面挂载时立即开始加载，第三方资源加载不再阻塞页面初始化；保留页面卸载时取消与清理。
+- 横幅统一使用页面 `cover`，作者页使用作者 `cover`，同步 SEO 图片来源；改进背景文字自适应与头像边框。
+- 调整标题装饰、导航下划线、搜索图标与快捷键提示、侧栏间距、移动正文顶部留白和长目录标题；修复 frame 媒体比例，mark 默认使用主题色并改进暗色配色。
+
+### 升级注意（配置变更与破坏性改动）
+
+- 删除 Menu 中的 `type: search` 项，改用 `leftbar.brand.search`；搜索需要启用 Provider 且 Brand 有图片或名称。该字段支持主题、Profile、Collection 和 Page 覆盖。
+- 分享服务 `wechat` 改为通用 `qrcode`，移除 `link` 与 `system`；检查 `article.footer.share` 及内容 `footer.share`，当前支持 qrcode、weibo、x、telegram、whatsapp、email。
+- 页面 `banner.image` 改用顶层 `cover`；Collection 不再声明 `banner`，页面 `banner` 仅保留 enabled/avatar/headline/tagline。移除 `article.banner.ratio`，横幅不再使用独立比例配置。
+- 移除 `appearance.typography.heading_prefixes`，标题装饰由主题样式维护。
+- Site Info、Rating、Vote 的服务 endpoint 默认留空，需要自行部署并填写地址；升级后如依赖这些服务，请显式配置对应 endpoint。
+
+Full Changelog: [2.0.0-rc.4...2.0.0-rc.5](https://github.com/xaoxuu/hexo-theme-stellar/compare/2.0.0-rc.4...2.0.0-rc.5)
+
+## 2.0.0-rc.4
+
+> 发布日期：2026-09-10
+
+本节记录从公开候选 `2.0.0-rc.3` 到 `2.0.0-rc.4` 最终文件树的净变化。
+
+### 修复与改进
+
+- 恢复博客列表导航中的专栏入口，使用当前上架专栏索引判断是否显示。
+- 修复移动端专栏文章列表横向溢出，调整 OKR 标签宽度与右对齐；移动端根字号增量由 2px 调整为 1px。
+- 统一集合控件、侧栏菜单与搜索结果字体，修复导航前缀和长标题的布局。
+- minimal 外观下文章、专栏封面与置顶轮播在普通及交互状态均去除边框，保留键盘焦点 outline。
+- Markdown 行内链接的站点信息请求失败时保留原图标，不再显示红色断链图标；数据加载失败时隐藏加载指示器。
+- 将仅用于源码检查的 `glob` 移至开发依赖，并显式声明 ESLint 配置需要的 `@eslint/js` 与 `globals`。
+
+### 升级注意（配置变更与破坏性改动）
+
+- 站点 Brand 的 GitHub 数据区改为显式读取 `leftbar.brand.ghuser`，默认 `null` 不显示；不再从 ghuser Widget 的 username 推断。需要保留统计时设置 `leftbar.brand.ghuser: 你的GitHub用户名`。该数据区仍仅在左栏 regular 样式下显示，Collection Brand 的仓库统计保持原有来源。
+
+Full Changelog: [2.0.0-rc.3...2.0.0-rc.4](https://github.com/xaoxuu/hexo-theme-stellar/compare/2.0.0-rc.3...2.0.0-rc.4)
+
+## 2.0.0-rc.3
+
+> 发布日期：2026-09-10
+
+本节记录从公开候选 `2.0.0-rc.2` 到 `2.0.0-rc.3` 最终文件树的净变化。
+
+### 新功能
+
+- 默认启用同集合局部导航：外壳兼容时更新正文、右栏和页面元数据，保留导航区域；支持历史滚动恢复，不兼容页面或请求失败时整页跳转。
+- 图片尺寸与 HSLA 平均色在 server/generate 时自动增量提取并持久缓存，补全生成 HTML，不修改 Markdown 或原图；新增 `hexo stellar images` 及 `--dry-run/--page/--refresh` 选项。
+- Markdown 文本链接、文章参考链接、远程 Markdown 与评论链接支持站点图标增强；站点信息支持 `appicon/favicon`，保留 `icon` 回退，行内请求失败显示断链图标。
+- 新增字体平滑与设计字重映射；卡片 Spotlight 与 Tilt 可独立开关。
+- 第三方 JS/CSS 地址可在对应搜索、评论、Feature 或 Markdown 服务配置中覆盖；Artalk 默认使用服务端配套资源。
+
+### 修复与改进
+
+- 共享 Collection 模型并隔离构建缓存，复用 PageViewModel 和归档文章投影，减少重复解析与校验；忽略 Collection 目录中的 macOS `.DS_Store` 文件。
+- 完善 Extension 的页面／文档作用域、异步取消及卸载清理；修复 Flying Pages 初始化、图片懒加载与 Safari 错误占位时序，Reveal 待入场透明度在卸载时恢复。
+- 修复文章上下篇、作者页 Topic 文章与作者横幅；Topic 文章默认继承全局分享配置，Wiki 与 Notebook 仍默认关闭分享。
+- Doctor 与构建统一恢复可用的配置：普通字段问题和不适用的表现参数给出 warning，缺少集合显示名时使用 Collection ID；根结构与归属冲突仍阻止构建。
+- 本地搜索按章节组织结果并分批查询、渲染，改进摘要、高亮、加载更多和结束提示。
+- 调整 minimal 外观、暗色背景、移动导航、品牌、目录吸顶与当前条目滚动；修复 Markdown Widget 背景、稀疏 Wiki 网格宽度、画廊列数以及轮播、图片标签、头像、MBTI 卡片的比例与布局。
+- GitHub 卡片默认服务切换为 `https://github-stats-extended.vercel.app`；图片颜色处理新增 Sharp 直接依赖。
+
+### 升级注意（配置变更与破坏性改动）
+
+- 将 `footer.sections` 改为 `footer.sitemap`；分组保留 `title/items`，但 items 中的 `{title, url}` 对象需改写为 `'[标题](地址)'` Markdown 字符串。默认 sitemap 为空数组；默认页脚正文新增 CC BY-NC-SA 4.0 说明，可自行覆盖 `footer.content`。
+- 将 `features.card_hover.enabled` 替换为独立的 `spotlight` 与 `tilt` 布尔值；希望保持原先全部开启效果时两项均设为 `true`，默认均为 `false`。
+- `features.partial_navigation.enabled` 默认开启，含非主题管理可执行脚本的页面使用整页导航；需要全部整页跳转时将其关闭。
+- `features.image_optimization.enabled` 默认开启，首次处理远程图片可能增加构建时间；关闭后仍复用站点 `source/_data/caches/images_metadata.json`。`features.lazy_loading.auto_aspect_ratio` 继续控制尺寸／比例补全。
+- 第三方资源覆盖不保证任意上游 API 版本兼容；KaTeX 自定义 CSS 时需配套更新 `css_integrity`，或设为 `null` 不附加 SRI。仅覆盖 CSS 地址时会清除继承的旧哈希。
+
+Full Changelog: [2.0.0-rc.2...2.0.0-rc.3](https://github.com/xaoxuu/hexo-theme-stellar/compare/2.0.0-rc.2...2.0.0-rc.3)
+
+## 2.0.0-rc.2
+
+> 发布日期：2026-09-07
+
+本节记录从公开候选 `2.0.0-rc.1` 到 `2.0.0-rc.2` 最终文件树的净变化。
+
+### 新功能
+
+- Notebook 列表、设置页与错误页的专属配置统一收敛到 `profiles`；404 页新增默认关闭的评论区，可独立覆盖标题、线程、Provider 与参数。
+- 可信页面注入补全 `head_begin/head_end/body_begin/body_end` 四个位置，站点主题配置与页面 Front Matter 使用同一合并顺序和原样输出语义。
+
+### 修复与工程变化
+
+- 将 `hexo-front-matter` 声明为主题直接依赖，避免源码配置与 `stellar new note` 依赖 Hexo 宿主的传递依赖。
+- 重构中英文 README，明确 npm、源码与 Blueprint 三种安装入口，并补充随 npm 包分发的 Stellar 图标、项目描述、关键词和作者元数据。
+
+### 升级注意（配置变更与破坏性改动）
+
+- 从 RC1 升级时，将顶层 `notebook` 移到 `profiles.notebook`，将 `settings.about` 移到 `profiles.settings.about`，将 `error_page.image` 移到 `profiles.error.image`。
+- `profiles.notebook_index` 更名为 `profiles.notebooks`，`profiles.note_index` 更名为 `profiles.notebook`；Note 内容页继续使用 `profiles.note`。
+- `inject` 内容会作为可信 HTML 原样输出；只应配置维护者完全信任的内容，站点级内容在前、页面 Front Matter 在后。
+
+Full Changelog: [2.0.0-rc.1...2.0.0-rc.2](https://github.com/xaoxuu/hexo-theme-stellar/compare/2.0.0-rc.1...2.0.0-rc.2)
+
+## 2.0.0-rc.1
+
+> 发布日期：2026-09-07
+
+本节记录从最近公开版本 `1.44.0` 到当前候选文件树的净变化；开发期间已经被替换的中间方案不属于迁移契约。
+
+### 新功能
+
+- 配置、Collection YAML 与页面 Front Matter 采用声明式严格 Schema；默认配置、校验、JavaScript 投影和 Reference 由同一字段事实生成，Doctor 在构建前给出带来源和字段路径的诊断。
+- 新增 Post、Topic、Wiki、Notebook、Note 与索引页共享的 Collection/PageViewModel 管线，并以 `listed/searchable` 分离聚合展示和搜索收录。
+- 页面外壳统一为 Topbar、Leftbar、Rightbar Region，Brand、Menu、Widget、Footer 和 13 个 Profile 使用结构化配置与明确的覆盖语义。
+- 新增 `card/glass/minimal/flat` 外观预设、明暗模式切换、颜色／渐变／排版／形状／背景设置，以及独立设置页。
+- 浏览器功能改为原生 ESM Runtime Manifest 和按 DOM 命中加载的 Extension；搜索、评论、Feature、数据服务及请求缓存拥有明确生命周期。
+- Wiki Hero 支持 `ferrofluid`、`galaxy`、`light-rays` 三种可选背景效果，效果与静态图片可叠加；标签目录新增 `gist`。
+- 新增 `hexo stellar doctor` 与 `hexo stellar new note`；目录驱动的完整 Blueprint 改由 Stellar Examples 仓库维护。
+
+### 行为、样式与工程变化
+
+- Article 与 Notebook 的列表、横幅、许可、分享、标签和排序默认值收敛到内容模型；Collection 内容默认关闭分享，Notebook 与其它 Collection 使用一致的覆盖规则。
+- 侧栏集合、Navbar、Dropdown、Grid、文章卡片、下载按钮和 Topbar 对齐使用统一的 UI capability、形状与状态反馈。
+- 运行环境升级为 Node.js 22+、Hexo 8+；构建、包集成、性能、知识库、贡献注册表和复用规则各自拥有独立门禁。
+- 发布流程原子同步 `package.json`、`package-lock.json` 与安装知识库的版本，并把未跟踪文件纳入工作区门禁，避免候选包、锁文件或临时产物漂移；稳定版写入 npm `latest`，RC 写入 `rc` dist-tag。
+- 主题仓库只保留长期指南、当前知识库和阶段审计；单次方案、迁移中间态及已被最终实现取代的测试／兼容残留不进入发布文件树。
+
+### 升级注意（配置变更与破坏性改动）
+
+- v1 的 `logo/menubar/site_tree/style/tag_plugins/plugins/data_services` 等结构不会被兼容读取；请按[公开迁移说明](https://xaoxuu.com/wiki/stellar/migration/v1-to-v2/)逐项迁移到 `topbar/leftbar/rightbar/footer/profiles/appearance/tags/features/services`。
+- Collection 与 Front Matter 需要迁移为 `collection/route/navigation/listing/visibility/banner/article/comments/render/seo` 等分组字段；未知字段、错误类型与非法枚举会在构建早期失败。
+- `about`、`users` 标签以及对应的 `chat_users.yml`、`fcircle` 适配器已移除；`tip` 改为单标签 `{% tip 词句 pop:注解 %}`，`quot` 支持直接图标键与 `color`。
+- 浏览器后处理必须原样保留 `public/js/runtime/**/*.js` 的 ESM 语义、相对 import 与 JavaScript MIME 类型。
+- v2 当前源码从仓库 `main` 安装并需要执行 `npm install --prefix themes/stellar`；npm 包是否为 v2 以实际公开版本为准。
+
+Full Changelog: [1.44.0...2.0.0-rc.1](https://github.com/xaoxuu/hexo-theme-stellar/compare/1.44.0...2.0.0-rc.1)
+
+## 1.44.0
+
+> 发布日期：2026-08-21
+
+### 新功能
+- 新增可选的卡片 Spotlight 光斑与 3D Tilt 倾斜效果，可通过 `plugins.card_hover` 配置启用、光斑颜色和最大倾斜角度，并按组件独立接入与降级
+- Wiki Hero 操作按钮接入 Spotlight 光效，背景图片与动画改为独立配置，Galaxy 支持逐实例参数覆盖、图片叠加和 WebGL 失败降级
+- 桌面端新增 `Command+K` / `Ctrl+K` 聚焦搜索框快捷键，在窄屏、编辑区域和输入法组合状态下保留原生行为
+
+### 样式与重构
+- 搜索控件改用原生搜索输入框、搜索地标和标签关联，完善无障碍语义；本地搜索与 Algolia 结果统一可点击区域、表面样式和 Spotlight 生命周期
+- 笔记标签行复用文章标签胶囊的 hashtag 图标、间距与交互样式
+
+### 升级注意（配置变更与破坏性改动）
+- Wiki Hero 的 Galaxy 配置由 `background: galaxy` 迁移为 `animation.type: galaxy`，参数放在 `animation.params`；`background` 现在仅用于背景图片，并可与动画同时显示
+- `plugins.card_hover.enable` 默认为 `false`，升级后不会自动启用卡片动态效果
+
+Full Changelog: [1.43.1...1.44.0](https://github.com/xaoxuu/hexo-theme-stellar/compare/1.43.1...1.44.0)
+
+## 1.43.1
+
+> 发布日期：2026-08-20
+
+### 修复
+- 左栏 Footer Social 的外部图片图标统一为 24×24px，非方形图片保持原始比例，避免固有尺寸撑宽按钮或被裁切
+- 发版脚本自动同步主题配置、包信息与安装知识库的版本号，并在最终待提交状态执行完整质量检查
+
+Full Changelog: [1.43.0...1.43.1](https://github.com/xaoxuu/hexo-theme-stellar/compare/1.43.0...1.43.1)
+
+## 1.43.0
+
+> 发布日期：2026-08-20
+
+### 新功能
+- Wiki 项目首页升级为完整 Hero：新增项目元信息、安装命令切换与复制、最新版本异步加载，并加入支持减弱动态效果的 WebGL 星河背景
+- Wiki 项目卡片重构为项目预览布局，补充适用范围、版本与仓库信息展示
+- Footer 新增通用下拉菜单、弹性占位项和自适应 social 布局；同时新增可复用的 `{% dropdown %}` 标签
+- 同源整页导航默认启用原生 View Transition，旧浏览器自动回退普通导航
+- 专栏列表按项目日期排序，文章列表超过阈值时以归档式折叠列表展示，可展开或收起其余文章
+
+### 修复
+- Mermaid 的 `style_optimization` 开关恢复正确语义，关闭时使用 Mermaid 官方主题，开启时应用 Stellar 优化样式，并修复图中文字不可见（#693）
+- `{% sites %}` 网站卡片缺少图标时复用 siteinfo 服务自动补全，请求失败时保留默认图标（#387）
+- navbar 在无轮播区页面顶部保持卡片样式，实际滚动 2px 后再切换为玻璃效果
+- 修复 linklist 激活圆点被标题样式覆盖，以及文章分享图标尺寸不一致的问题
+
+### 样式与重构
+- 侧栏菜单、目录树、相关内容、Widget 与下拉菜单统一复用 collection 组件，收敛结构、密度、背景、暗色高亮和交互反馈
+- Wiki Hero 调整版本标签布局、星河辉光与鼠标排斥效果
+- 移动端根字号自动增加 2px，并统一正文、标题、列表与标签插件的响应式排版
+- 评论区与异步数据服务统一使用自包含的三圆点 loading 动画，移除外部 loading 图标依赖
+
+### 升级注意（配置变更与破坏性改动）
+- 新增 `style.page_transition.enable`，默认 `true`；不需要原生跨文档过渡时可设为 `false`
+- 移除 `style.font-size.body`，正文与组件字号统一从 `style.font-size.root` 派生；移动端根字号会在配置值基础上增加 2px
+- 移除 `default.loading` 配置，loading 动画改为主题内置 SVG
+- `footer.social` 支持 `type: dropdown`、`items` 与 `spacer`；旧的普通链接配置继续兼容
+
+Full Changelog: [1.42.1...1.43.0](https://github.com/xaoxuu/hexo-theme-stellar/compare/1.42.1...1.43.0)
+
+## 1.42.1
+
+> 发布日期：2026-08-17
+
+### 修复
+- 图片懒加载过滤器在 HTML 压缩器（如 hexo-minify `removeAttributeQuotes`）去除属性引号后，原正则跨标签越界，把页尾 bootstrap 内联脚本里的 `s.src = "/js/utils.js?v=..."` 误改写为「1×1 PNG 占位 + `data-src`」，导致 bootstrap 语法错误、`stellar is not defined` 连锁报错、scrollreveal 不初始化、`.slide-up` 文章列表延迟约 3 秒才显示；改为属性感知标签扫描并跳过 `<script>`/`<style>`/注释区域，同时兼容无引号 `src` 的图片懒加载
+- bootstrap 的 utils 补载改用 `setAttribute('src')` 赋值，避免被基于 `s.src = "..."` 的朴素正则（图片懒加载 / 脚本延迟优化器）改写
+- `layout/_plugins/index.ejs` 增加 `stellar.initPlugin` 兜底注册点：bootstrap 被第三方优化器改写/移除时不再产生 `stellar is not defined` 连锁报错，插件仍可注册运行
+
+Full Changelog: [1.42.0...1.42.1](https://github.com/xaoxuu/hexo-theme-stellar/compare/1.42.0...1.42.1)
+
+## 1.42.0
+
+> 发布日期：2026-08-16
+
+### 新功能
+- 文章卡片新增 `article.card_style`（`hero` / `classic`）：hero 全图文字封面卡片（有 cover 时标题 + 单行小字，文字区固定底部），classic 普通卡片；hero 与置顶轮播统一小字取值 `subtitle()`（`subtitle` > `description` > excerpt 前 50 字）
+- 背景图/背景色上方文字颜色自适应（`plugins.adaptive_text`，默认开启）：`theme` / `contrast` / `split` 三种模式，按背景平均色计算并写入 `--text-banner` / `--text-banner-theme`，接入文章封面、专栏最新文章卡片、置顶轮播、页顶横幅与 `{% banner %}` 标签
+- 专栏列表页重构为上下布局：标题 + 描述 + 全宽最新文章卡片 + 其他文章列表，抽出 `.post-panel` 公共组件（友链文章订阅同步复用）
+
+### 修复
+- 标签行负边距导致移动端页面横向溢出（#688）
+- albums/posters 在 Firefox/Safari 标题竖排与遮罩消失问题（#689）
+- Babel 转译将 `sidebar` 全局改名导致侧边栏失效
+- 作者归档页横幅下块贴顶；页面顶部横幅黑色蒙版始终显示并贴边
+- Safari 下顶部横幅与列表封面方角漏出（`isolation: isolate` + `translateZ(0)` + clip-path 兜底）
+- banner 导航激活项 blur 导致 hover 圆角丢失
+- TOC 回到顶部/参与讨论图标改为内联并修复占位符布局
+- 轮播区/文章封面/页顶横幅/`{% banner %}` 图片角落跟随连续曲率圆角配置
+- timeline 页脚评论图标尺寸与文字对齐
+
+### 样式
+- 文章卡片标签 `#` 前缀替换为 hashtag 图标
+- banner hover 动画对齐封面（背景图缩放 1.05 + 变暗），封面渐变模糊层增加黑色蒙版
+- 统一封面、轮播、页顶横幅与 banner 标签背景图覆盖层观感（`cover-overlay()`）
+- 左栏「所有项目」返回胶囊默认背景复用目录树激活光照效果
+- 间距令牌重构为 `--gap-base` / `--gap-page`：组件内部间距固定 16px，页面级留白随断点分档（16/32px），侧边栏贴边时四周间距一致
+- 右栏在侧边栏基础宽度上单独加宽（新增 `--rightbar-width-extra`，默认 32px）
+- 右栏 `.l_right .widgets` 桌面端 padding 归零，折叠抽屉保留 16px 0
+- 折叠抽屉位移改为跟随自身宽度（`calc(100% + inset*2)`），修复右栏加宽后收拢仍露边
+
+### 重构
+- 移除已失效的 auto_banner（Unsplash 自动横幅）与 `poster` 配置
+- 页面横幅上块重构为显式两行结构（面包屑 + 阅读时长/AI 标签 + 日期行）
+- 评论数图标统一使用 `default:to-comment`，移除 `weibo:comment`
+
+### 其他
+- 移除知识库合并版 `知识库全量.md`，知识库以领域页面为唯一事实源
+- 新增 AI 规范引用一致性检查与发版前提交登记完整性检查（随 `npm run check` 执行）
+
+### 升级注意（配置变更与破坏性改动）
+- 移除 `article.auto_banner`（Unsplash 自动横幅已失效）与文章 front-matter `poster`（`headline` / `topic` / `caption`）；`poster.color` / `banner_info.color` 显式文字颜色不再生效，由自适应文字颜色接管
+- 新增 `article.card_style`（`hero` 默认 / `classic`）：未显式设置的站点保持 hero 卡片样式
+- 新增 `plugins.adaptive_text`（默认 `enable: true`）：页面存在 `[data-text-adaptive]` 元素时才按需加载，文字颜色默认随背景自适应
+- 删除间距令牌 `--gap-margin` / `--gap-padding` / `--gap-max`，替换为 `--gap-base`（组件内部间距）与 `--gap-page`（页面级留白）；引用旧令牌的自定义 CSS 需迁移
+- `weibo:comment` 图标已移除，评论数图标统一使用 `default:to-comment`；自定义中引用了 `weibo:comment` 的站点请改用 `default:to-comment`
+- 知识库合并版 `知识库全量.md` 移除（RAG 可直接索引领域页面）
+
+Full Changelog: [1.41.0...main](https://github.com/xaoxuu/hexo-theme-stellar/compare/1.41.0...main)
+
+## 1.41.0
+
+> 发布日期：2026-08-15
+
+### 新功能
+- 本地搜索：搜索结果按章节拆分展示，点击直达章节锚点，目标页自动高亮关键词（`?kw=` 定位）
+- 本地搜索：懒加载与缓存 TTL（`search.local_search.lazy_load` 默认开启、`cache_ttl` 默认 1 天）
+- navbar 未吸顶时采用卡片样式，吸顶后恢复玻璃效果
+- 文章末尾新增标签行（`article.tags`，默认开启）
+- 内容表格统一铺满滚动与圆角边框
+- 文章新增 AI 成分标签（front-matter `ai_label: manual | polished | generated | reviewed`，`article.ai_label` 配置文案与颜色，默认不渲染）
+
+### 修复
+- 移动端顶栏伸缩时 navbar 玻璃效果误消失
+- 导航激活指示改为纯 CSS 小圆点，修复异步图标替换引起的抖动/闪烁
+- 恢复标题锚点等页内链接平滑滚动
+- 评论表情面板图片不再误触发 fancybox 弹窗
+- 修正 toc 底部操作按钮分隔线选择器
+- 修复 artalk 邮件链接无法定位评论区
+- SEO 元数据修复：wiki 标题去重、`og:site_name`、JSON-LD 图片/描述回退、分页标题
+
+### 样式
+- 调整 navbar 与 float-panel 按钮尺寸与间距（40px、gap 4px、底部 inset ×1）
+
+### 性能
+- 按需加载与外置缓存优化，减小 html/css/js 体积
+- 图标按命名空间异步加载，首屏关键图标保持内联
+- 构建期脚本去重遍历与过滤器短路（generate 阶段优化）
+
+### 重构
+- 主题内置图标统一迁移到 `_data/icons.yml`
+- 图标键统一为语义化命名空间（`default:` / 标签名命名空间），消除 `solar:`、`ph:`、`bxs:` 前缀
+
+### 升级注意（配置变更与破坏性改动）
+- 新增 `article.tags`（默认 `true`）：文章末尾显示标签行，不需要时设为 `false`
+- 新增 `article.ai_label` 与 front-matter `ai_label` 字段：不设置时不渲染，历史文章零变化
+- 新增 `search.local_search.lazy_load`（默认 `true`）与 `cache_ttl`（默认 `86400`）
+- 破坏性变更：图标键为公开接口，`solar:*` 等旧前缀键已全部改名；站点若在 `source/_data/icons.yml` 覆盖或 `_config.stellar.yml` 引用旧键需同步改名（主工程已确认无此类覆盖）
+
+Full Changelog: [1.40.0...1.41.0](https://github.com/xaoxuu/hexo-theme-stellar/compare/1.40.0...1.41.0)
+
+## 1.40.0
+
+> 发布日期：2026-08-14
+
+### 新功能
+- 文章页新增字数与预计阅读时长显示（`article.reading_time`，默认关闭）
+- 文章卡片新增标签展示（最多 5 个，`article.card_tags`，默认关闭）
+- 新增表格标签 `{% table style:scroll|wrap|compact %}`，支持滚动/换行/紧凑三种表格样式
+- 新增气泡注解标签 `{% tip text:... %}词句{% endtip %}`，桌面 hover、移动端点击显示
+- 远程 Markdown 渲染抽象：`{% md %}` 标签新增可选 `wrap` 参数；wiki 项目配置 `repo` 后可直接以仓库 README 作为首页正文
+
+### 修复
+- wiki 项目描述作为页面描述（OG / JSON-LD）的兜底，修复 SEO 描述缺失的问题
+- 声明 hexo-pagination / hexo-util 依赖并新增依赖声明检查门禁，修复幽灵依赖导致的构建问题
+- 时间线节点标题（header）不再渲染 markdown 的问题（#401）
+- 分类页三级及以上分类无法正确展示的问题，改为基于 parent 递归构建嵌套树（#564）
+- 亮暗切换后 topbar 与左栏颜色不同步的问题：navbar/sidebar 暗色样式统一跟随 `data-theme` 开关（#593、#663）
+- iOS Safari 下右下角悬浮控件在玻璃椭圆框中不对齐的问题（#599）
+- artalk 邮件通知链接携带 `?atk_*` 参数导致目录定位失效的问题（#598）
+- waline 最近评论接口返回结构兼容（数组 / `{ data: [...] }`）（#630）
+- memos 新版 v1 接口识别与渲染适配，识别失败仍回退 feature 兜底（#668）
+- new-note 命令生成 front-matter 的 date 对齐为 `YYYY-MM-DD HH:mm`（#594）
+
+### 升级注意（配置变更与破坏性改动）
+- 新增 `article.reading_time`（默认 `false`）与 `article.card_tags`（默认 `false`），需要时设为 `true`
+- 新增 `table`、`tip` 两个标签插件；`table` 默认使用 `scroll` 样式
+
+Full Changelog: [1.39.1...1.40.0](https://github.com/xaoxuu/hexo-theme-stellar/compare/1.39.1...1.40.0)
+
+## 1.39.1
+
+> 发布日期：2026-08-13
+
+### 新功能
+- 置顶文章新增平铺样式配置 `article.pin_style: flat`：首页第一页不再渲染置顶轮播，置顶文章按与轮播一致的排序权重在文章列表靠前平铺展示
+
+### 修复
+- 用户内容统一 HTML 转义并移除圆点 aria-label，修复标题含引号导致构建失败
+
+### 升级注意（配置变更与破坏性改动）
+- 新增 `article.pin_style`（`carousel` / `flat`，默认 `carousel`）：默认行为不变；设置 `flat` 后首页置顶文章改为平铺样式展示
+
+Full Changelog: [1.39.0...1.39.1](https://github.com/xaoxuu/hexo-theme-stellar/compare/1.39.0...1.39.1)
+
+## 1.39.0
+
+> 发布日期：2026-08-13
+
+### 新功能
+- 左侧栏新增纯色卡片风格（`style.leftbar.ui-style: card`）：实色 `var(--card)` 背景 + 中间档阴影，列表项、搜索条交互与右栏观感一致
+- 列表页新增置顶内容轮播：首页/归档/标签/分类/专栏/wiki 列表自动渲染置顶文章或项目（无需额外配置），bar UI 统一、分页器图标更新
+- 头像彩虹光环改为 CSS 锥形渐变（`style.gradient.avatar`），不再依赖外部图片
+
+### 修复
+- 最新评论组件：正文转纯文本并截断、保留表情图并限高，修复侧栏布局
+- 懒加载图片自动注册动态插入的图片
+- 置顶轮播翻页按钮垂直居中
+- integration 构建因 workspace 路径限制导致的 demo 检出失败
+
+### 样式
+- 压缩页面顶部与侧边栏间距，胶囊元素改为正圆端帽（`style.radius.bar` 默认 8px → 12px）
+- 左栏卡片阴影透明度调整为 0.05，card 风格组件背景统一为 `var(--block)` / `var(--block-border)`
+- 侧栏底部间距改为仅手机端生效，PC 上下统一为 gap-margin
+- linklist 多列项按 leftbar 风格显示背景色
+- 导航链接移除 corner-shape 覆盖，与父容器保持一致
+
+### 其他
+- 新增主题中文知识库（`docs/knowledge/`）、AI 协作规范与贡献指南
+- integration 构建切换至 Hexo 8，并补充兼容适配方案
+- 新增标签插件风格设计规范
+
+### 升级注意（配置变更与破坏性改动）
+- 新增 `style.leftbar.ui-style`（`glass` / `card`，默认 `card`）：未显式设置的站点升级后默认显示卡片风格，可用 `glass` 恢复原磨砂玻璃效果
+- 新增 `style.gradient.avatar`（头像光环渐变色）；移除 `style.animated_avatar.background`
+- 移除 `style.paginator.prev` / `style.paginator.next`（分页器图标改为内置 SVG）
+
+Full Changelog: [1.38.0...1.39.0](https://github.com/xaoxuu/hexo-theme-stellar/compare/1.38.0...1.39.0)
+
+## 1.38.0
+
+> 发布日期：2026-08-11
+
+### 新功能
+- 新增连续曲率圆角配置 `style.corner-shape`（默认 `superellipse(1.2)`）：所有带圆角的位置统一使用曲率连续的 squircle 曲线，自动适配容器宽高；文章卡片与横幅的渐变模糊改为「同图模糊层」实现以兼容连续曲率（仅 Chromium 139+ 原生支持，其余浏览器自动回退普通圆角，可设 `round` 关闭）
+- 左栏导航列表化，wiki 内页增加返回按钮与搜索条交互优化
+- 菜单栏激活/悬停图标与圆点支持可配置角度的主题色渐变（`style.gradient.angle`）
+- 首页支持可配置评论区（默认关闭，`site_tree.home.comments`）
+- 新增 mbti 标签
+
+### 修复
+- 补全 npm-publish workflow 的 GH_TOKEN，修复 GitHub Release 创建失败
+- GitHub Release 正文不再包含 CHANGELOG 发布日期行
+- 克隆站提示源站从 encoded 反解，防止批量替换域名误导
+- 侧栏内部滚动容器组件 scrollreveal 不显示
+- 仅当页面包含 toc 或评论时显示 toc 操作按钮
+- wiki 封面「开始使用」按钮平滑滚动，#start 锚点贴顶定位
+
+### 重构
+- 移除官方备用站提示的关闭按钮与配置项
+
+### 优化
+- 动态数据组件缓存优化：同 URL 请求去重、memos 用户详情缓存、stale 兜底
+
+### 样式
+- 侧栏光照效果覆盖相关卡片、返回胶囊与 widget 操作按钮
+- 侧栏导航区边距调整
+- 左栏激活书签等彩色图标使用主题色渐变
+- 侧栏高亮项顶部叠加白色光照渐变与高光边
+- 左侧栏底部留白调整为 32px
+- 作者页与错误页侧栏不再显示时间线
+- 移动端顶部导航吸顶距离调整为 8px
+
+### 升级注意（配置变更与破坏性改动）
+- 新增 `style.corner-shape`（默认 `superellipse(1.2)`）：连续曲率圆角仅 Chromium 139+ 生效，其余浏览器自动回退普通圆角；设置 `round` 可关闭
+- 新增 `style.gradient.angle` 与 `site_tree.home.comments` 配置
+- 移除 `canonical.closeEnable`、`canonical.closeText` 配置项：官方备用站提示不再支持手动关闭
+
+Full Changelog: [1.37.0...1.38.0](https://github.com/xaoxuu/hexo-theme-stellar/compare/1.37.0...1.38.0)
+
 ## 1.37.0
 
 > 发布日期：2026-08-09
@@ -10,7 +498,7 @@
 
 ### 其他
 - CHANGELOG.md 历史数据一次性从 GitHub Releases API 同步入库（76 个版本，统一格式）
-- 新增发版流程文档（docs/guides/release-process.md）与设计记录（docs/designs/2026-08-09-release-automation.md）
+- 新增发版流程文档（docs/guides/release-process.md）并完善发布自动化记录
 
 Full Changelog: [1.36.0...1.37.0](https://github.com/xaoxuu/hexo-theme-stellar/compare/1.36.0...1.37.0)
 
@@ -56,7 +544,7 @@ Full Changelog: [1.35.0...1.36.0](https://github.com/xaoxuu/hexo-theme-stellar/c
 - 统一 URL 路径规范化逻辑，修复 canonical 标签路径不一致的问题
 - 修复 wiki 文档树中索引页（index）的路径匹配错误
 - 发版脚本迁移为 Node CLI（release.js），支持版本校验、dry-run 预览与二次确认
-- 完善仓库 AI 协作规范（AGENTS.md、issue 处理规则），重组 docs 目录（designs/、guides/、audits/）
+- 完善仓库 AI 协作规范（AGENTS.md、issue 处理规则），重组 docs 中的长期指南与审计记录
 - 优化 npm 发布忽略规则（.npmignore）
 
 Full Changelog: [1.34.0...1.35.0](https://github.com/xaoxuu/hexo-theme-stellar/compare/1.34.0...1.35.0)

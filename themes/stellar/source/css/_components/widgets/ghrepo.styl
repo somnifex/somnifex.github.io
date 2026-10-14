@@ -10,14 +10,15 @@
       margin-top: 0.5rem
     span
       color: var(--text-p2)
-    svg
+    .ui-icon
+      --ui-icon-size: 1em
       margin-right: 4px
     .flex-row
       display: flex 
       align-items: center
     .repo-name
       font-size: $fs-14
-      font-weight: 700
+      font-weight: $fw-700
       color: var(--text-p1)
     .repo-desc
       font-size: $fs-13
@@ -28,3 +29,7 @@
       display: grid
       grid-gap: 2px
       grid-template-columns: repeat(auto-fill, "calc((100% - 2 * %s) / 3)" % 2px)
+      .flex-row
+        min-width: 0
+        span
+          txt-ellipsis()

@@ -1,9 +1,5 @@
 ---
-wiki: pi-cookbook
 title: 安装 Pi
-seo_title: 安装 Pi
-group: "🟢 新手入门"
-order: 2
 ---
 
 > 🟢 新手必做 | 本章所有命令均可在 Windows PowerShell、macOS Terminal、Linux Shell 中执行。

@@ -1,10 +1,9 @@
 ---
-wiki: claude-code-cookbook
 title: Cost Engineering
 date: 2026-08-11 00:00:00
 tags: [Claude Code, Wiki]
-category: wiki
-mermaid: true
+render:
+  diagrams: mermaid
 ---
 
 > 来源：Claude Code Cookbook · Part 37 · 原文标题：Part 37 — Cost Engineering

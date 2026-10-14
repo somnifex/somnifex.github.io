@@ -9,11 +9,9 @@ pre
 a
   text-decoration: none
   color: var(--link)
-  &:hover
-    color: var(--accent)
 
 .md-text p:not([class]) 
-  text-align: convert(hexo-config('style.text-align'))
+  text-align: convert(hexo-config('appearance.typography.content_align'))
 
 hr
   color: var(--text-meta)
@@ -22,45 +20,40 @@ hr
 
 img
   max-width: 100%
+  height: auto
 
 li
-  font-size: 'calc(%s - 1px)' % var(--fsp)
+  font-size: 'calc(%s - 1px)' % var(--fs-content)
 
 
 ul,ol
-  padding-left: var(--fsp)
+  padding-left: var(--fs-content)
 
 
 // table
 table:not([class])
   border-collapse: collapse
-  overflow: auto
+  display: block
+  overflow-x: auto
+  -webkit-overflow-scrolling: touch
   margin: 1rem 0
   max-width: 100%
   vertical-align: text-top
-  --fsp: $fsp2
-  font-size: var(--fsp)
+  --fs-content: $fs-content-2
+  font-size: var(--fs-content)
   scrollbar(0,0)
-  display: table
   th
-    background: var(--block)
-    border-top: 1px solid var(--block-border)
-    border-bottom: 1px solid var(--block-border)
+    border-style: solid
+    border-width: 1px 0
   td,th
     padding: 4px 1em
     line-height: 1.5
   tr
-    border-bottom: 1px dashed var(--block-border)
+    word-break: keep-all
+    white-space: nowrap
+    border-bottom-style: dashed
+    border-bottom-width: 1px
     trans()
-    &:hover
-      background: var(--block)
 
   @media screen and (min-width: $device-mobile-max)
     width 100%
-
-  @media screen and (max-width: $device-mobile-max)
-    display: block
-    tr
-      word-break: keep-all
-      white-space:nowrap
-

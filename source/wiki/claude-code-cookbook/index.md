@@ -1,10 +1,9 @@
 ---
-wiki: claude-code-cookbook
 title: Claude Code Cookbook
 date: 2026-08-11 00:00:00
 tags: [Claude Code, Agent, 技术文档]
-category: wiki
-mermaid: true
+render:
+  diagrams: mermaid
 ---
 
 # Claude Code Cookbook

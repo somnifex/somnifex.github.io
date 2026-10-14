@@ -15,9 +15,10 @@ tags:
   - 软件工程
   - 软件架构
   - React
-comments: true
-toc: true
-mermaid: true
+comments:
+  enabled: true
+render:
+  diagrams: mermaid
 ---
 ![skillhive-cover.png](https://i.096899.xyz/1785425890-skillhive-cover.png)
 Agent 项目通常会沉淀一批可复用的 Skill。它们可能是提示词、操作步骤、脚本说明，也可能是一套完整的任务处理规范。个人使用时，把文件保存在本地目录通常已经够用。团队开始共享后，同一个 Skill 容易形成多个副本，成员难以确认当前版本，修改记录散落在聊天记录和提交历史中，私人内容与团队内容也可能混在一起。

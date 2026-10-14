@@ -10,8 +10,8 @@ tags:
   - LLM
   - AI入门
   - AIGC
-comments: true
-toc: true
+comments:
+  enabled: true
 ---
 ## 教学目标
 

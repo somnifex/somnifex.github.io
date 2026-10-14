@@ -11,12 +11,19 @@
 
 module.exports = ctx => function(args, content) {
   args = ctx.args.map(args, ['bg', 'avatar', 'link'], ['title', 'subtitle'])
+  var bg = args.bg || ''
   var el = ''
-  el += `<div class="tag-plugin banner">`
+  el += `<div class="tag-plugin banner${bg ? '' : ' no-bg'}"`
+  if (bg) {
+    el += ` style="--bg-url:url('${bg.replace(/'/g, '%27')}')"`
+  }
+  el += '>'
   // bg
-  el += `<img class="lazy bg" data-src="${args.bg ? args.bg : ctx.theme.config.default.banner}">`
+  if (bg) {
+    el += `<img class="lazy bg" data-src="${bg}">`
+  }
   // content
-  el += `<div class="content">`
+  el += `<div class="content"${bg ? ' data-text-adaptive="split"' : ''}>`
   // content.top
   el += `<div class="top">`
   // content.top.back
@@ -25,7 +32,7 @@ module.exports = ctx => function(args, content) {
   } else {
     el += `
     <button class="back cap" onclick="window.history.back()">
-      <svg aria-hidden="true" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M7.78 12.53a.75.75 0 01-1.06 0L2.47 8.28a.75.75 0 010-1.06l4.25-4.25a.75.75 0 011.06 1.06L4.81 7h7.44a.75.75 0 010 1.5H4.81l2.97 2.97a.75.75 0 010 1.06z"></path></svg>
+      ${ctx.utils.icon('default:arrow-left')}
     </button>
     `
   }

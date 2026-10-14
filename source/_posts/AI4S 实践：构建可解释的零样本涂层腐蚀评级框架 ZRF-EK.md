@@ -13,8 +13,8 @@ tags:
   - 大模型应用
   - 神经符号系统
   - 涂层退化评估
-comments: true
-toc: true
+comments:
+  enabled: true
 ---
 近期，我们与天津大学材料学院合作的论文《Degradation grading of organic coatings via explainable vision–impedance multimodal zero-shot learning》被 *Corrosion Science* 接收（文章号 113980，DOI: 10.1016/j.corsci.2026.113980）。作为本研究的共同第一作者，我主要负责其中的计算机算法与大模型框架设计部分。本文将跳出纯材料学的实验细节叙事，从计算机科学与 AI for Science (AI4S) 的视角，梳理我们是如何处理涂层图像、电化学阻抗谱与大语言模型 (LLM) 推理之间的对齐问题的。
 ### 业务背景与算法挑战

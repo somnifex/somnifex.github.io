@@ -1,9 +1,5 @@
 ---
-wiki: pi-cookbook
 title: 术语表
-seo_title: 术语表
-group: "🟢 新手入门"
-order: 22
 ---
 
 > 按字母顺序解释 Pi 相关术语。

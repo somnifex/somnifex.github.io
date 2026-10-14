@@ -13,8 +13,8 @@ tags:
   - 卷积神经
   - ResNet
 
-comments: true
-toc: true
+comments:
+  enabled: true
 ---
 ## 前言
 

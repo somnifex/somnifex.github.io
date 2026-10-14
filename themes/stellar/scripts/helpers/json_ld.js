@@ -6,11 +6,22 @@
 'use strict';
 
 const util = require('hexo-util');
+const { scriptJson } = require('../lib/script-json');
+const { postImages, postDescription } = require('../lib/seo');
+const { getCollectionId } = require('../lib/content-config');
+const { pageViewModelsFor } = require("../lib/page-view-model-registry");
 
 hexo.extend.helper.register('json_ld', function(args) {
+  if (args?.render?.seo) {
+    if (!args.render?.seo?.jsonLd) {
+      throw new Error(`Stellar v2: ${args.collection?.profile || "页面"} ${args.item?.source?.file || "<unknown>"} 缺少 render.seo.jsonLd`);
+    }
+    return `<script type="application/ld+json">${scriptJson(args.render.seo.jsonLd)}</script>`;
+  }
   const page = this.page;
+  const pageConfig = pageViewModelsFor(hexo).getPageConfig(page) || {};
   const config = this.config;
-  const structured_data = this.theme.structured_data;
+  const structuredData = this.stellar_config("structuredData");
   const authorEmail = config.email;
   let authorImage = config.avatar || (authorEmail ? this.gravatar(authorEmail) : null);
   const isPage = page.layout == 'page';
@@ -21,7 +32,7 @@ hexo.extend.helper.register('json_ld', function(args) {
   const author = {
     '@type': 'Person',
     name: config.author,
-    sameAs: structured_data.links || []
+    sameAs: structuredData.sameAs
   };
   // Google does not accept `Person` as item type for the publisher property
   const publisher = Object.assign({}, author, {'@type': 'Organization'});
@@ -37,6 +48,12 @@ hexo.extend.helper.register('json_ld', function(args) {
   }
 
   if (this.is_post()) {
+    const images = postImages({
+      cardCover: pageConfig.cover,
+      photos: page.photos,
+      content: page.content,
+      defaultCover: this.stellar_config("fallbacks.cover")
+    });
     schema = {
       '@context': 'https://schema.org',
       '@type': 'BlogPosting',
@@ -45,7 +62,7 @@ hexo.extend.helper.register('json_ld', function(args) {
       dateCreated: page.date.format(),
       dateModified: page.updated.format(),
       datePublished: page.date.format(),
-      description: this.strip_html(page.excerpt),
+      description: postDescription({ excerpt: page.excerpt, content: page.content }),
       headline: page.title,
       mainEntityOfPage: {
         '@type': 'WebPage',
@@ -59,18 +76,7 @@ hexo.extend.helper.register('json_ld', function(args) {
       schema.keywords = page.tags.map((tag) => tag.name).join(', ');
     }
 
-    let images = [];
-    if (page.photos && page.photos.length > 0) {
-      images = images.concat(page.photos);
-    }
-
-    if (page.cover?.length > 0) {
-      images = images.unshift(page.cover);
-    } else if (page.banner?.length > 0) {
-      images = images.unshift(page.banner);
-    }
-
-    schema.thumbnailUrl = page.cover || page.banner;
+    schema.thumbnailUrl = images[0] || undefined;
     schema.image = images;
 
   } else if (isPage || this.is_home()) {
@@ -98,6 +104,11 @@ hexo.extend.helper.register('json_ld', function(args) {
 
       if (page.excerpt || page.description) {
         schema.description = this.strip_html(page.description || page.excerpt);
+      } else if (getCollectionId(pageConfig, "wiki")) {
+        const proj = this.stellar_data("wiki.tree")[getCollectionId(pageConfig, "wiki")];
+        if (proj && proj.description) {
+          schema.description = proj.description;
+        }
       } else {
         schema.description = util.truncate(this.strip_html(page.content), {length: 200});
       }
@@ -119,5 +130,5 @@ hexo.extend.helper.register('json_ld', function(args) {
 
   }
 
-  return `<script type="application/ld+json">${JSON.stringify(schema)}</script>`;
+  return `<script type="application/ld+json">${scriptJson(schema)}</script>`;
 });

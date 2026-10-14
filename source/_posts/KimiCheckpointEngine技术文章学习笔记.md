@@ -10,8 +10,8 @@ tags:
   - 大语言模型
   - 分布式系统
   - 推理优化
-comments: true
-toc: true
+comments:
+  enabled: true
 ---
 [技术报告原文](https://moonshotai.github.io/checkpoint-engine/)
 大型语言模型在训练好以后，用来做推理的时候通常是固定参数的。但如果要做RL或RLHF，就会频繁地更新模型的权重。每次更新权重，如果要重新加载整个模型到所有推理设备上，会花很多时间。这会带来两个问题：

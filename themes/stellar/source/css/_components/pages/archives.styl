@@ -3,7 +3,7 @@
   .archive-header
     display: inline-block
     font-family: $ff-code
-    font-weight: 700
+    font-weight: $fw-700
     line-height: 1.2
     margin-bottom: .5em
     position: relative
@@ -19,40 +19,41 @@
       z-index: -1
       border-radius: 4px
       background: var(--theme)
-  a.post
-    display: inline-flex
-    align-items: baseline
-    margin: 0.25rem 0
-    color: var(--text-p1)
-    trans2 color border
-    border-bottom: 1px dashed var(--text-meta)
+
+.post-list .archive-list a.post
+  display: inline-flex
+  align-items: baseline
+  margin: 0.25rem 0
+  color: var(--text-p1)
+  trans2 color border
+  border-bottom: 1px dashed var(--text-meta)
+  time
+    font-family: $ff-code
+    margin-right: 1em
+    font-weight: $fw-700
+    flex-shrink: 0
+    color: var(--text-p4)
+  &:hover
+    border-bottom: 1px solid var(--theme)
+    color: var(--text)
     time
-      font-family: $ff-code
-      margin-right: 1em
-      font-weight: 700
-      flex-shrink: 0
-      color: var(--text-p4)
-    &:hover
-      border-bottom: 1px solid var(--theme)
-      color: var(--text)
-      time
-        color: var(--theme)
+      color: var(--theme)
 
 
 
 .post-list #cats
   padding: 0
+  .cat-item
+    display: block
   a.cat
     display: flex
-    &.child
-      padding-left: 2rem
     padding: .5em 1rem
     border-radius: $border-bar
     color: var(--text-p2)
     align-items: center
     justify-content: space-between
-    font-weight: 500
-    font-size: $fsp2
+    font-weight: $fw-500
+    font-size: $fs-content-2
     span
       display: flex
       align-items: center
@@ -62,7 +63,7 @@
       transform: scale(1.2)
       margin-right: 8px
     .badge
-      font-weight: 700
+      font-weight: $fw-700
       font-family: $ff-code
       opacity: .5
       font-size: $fs-12
@@ -72,34 +73,21 @@
       .badge
         opacity: 1
         color: var(--theme)
+  .cat-children
+    margin-left: 1.25rem
+    padding-left: .75rem
+    border-left: 1px dashed var(--text-meta)
 
 .post-list #tags
   display: flex
   flex-wrap: wrap
   padding: 0
-  margin: 0 -4px
+  margin: 0
+  column-gap: 1rem
   a.tag
-    display: inline-flex
-    align-items: center
-    position: relative
-    color: var(--text-p2)
-    margin: 4px
-    padding: .5em .75rem
-    border-radius: 4px
-    background: var(--block)
-    font-size: $fs-13
-    font-weight: 500
-    &:before
-      content: "#"
-      margin-left: -2px
-      margin-right: 2px
-      opacity: .4
-    &:hover
-      &:before
-        color var(--theme)
-        opacity: 1
-      color: var(--text)
-      background: var(--block-border)
+    tag-chip()
+    margin-left: 0
+    margin-right: 0
 
 @media screen and (min-width: $device-mobile)
   .post-list.author #archive

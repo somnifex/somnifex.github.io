@@ -12,12 +12,17 @@
 
 'use strict'
 
+const { composeUiClasses } = require('../../lib/ui-capabilities')
+
 module.exports = ctx => function(args, content) {
   args = ctx.args.map(args, ['bg', 'w', 'c', 'gap', 'br'])
   if (args.w == null && args.c == null) {
-    args.w = '240px'
+    args.w = '280px'
   }
   var el = ''
+  var cellClass = args.bg === 'card'
+    ? composeUiClasses('cell', 'hoverCard')
+    : 'cell'
   el += '<div class="tag-plugin grid"'
   el += ' ' + ctx.args.joinTags(args, ['bg', 'columns']).join(' ')
   el += ' style="'
@@ -34,7 +39,7 @@ module.exports = ctx => function(args, content) {
   // 分组
   var cells = content.split(/<!--\s*cell(.*?)-->/g).filter(item => item.trim().length > 0)
   for (let cell of cells) {
-    el += `<div class="cell" style="`
+    el += `<div class="${cellClass}" style="`
     if (args.br) {
       el += `border-radius:${args.br};`
     }

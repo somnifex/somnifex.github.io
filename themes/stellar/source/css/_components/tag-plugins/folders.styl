@@ -1,7 +1,7 @@
 .tag-plugin.folders
   margin: var(--gap-p) 0
-  --fsp: $fsp2
-  font-size: var(--fsp)
+  --fs-content: $fs-content-2
+  font-size: var(--fs-content)
   border-top: 1px solid var(--block-border)
   overflow: hidden
   .folder
@@ -10,7 +10,7 @@
   summary
     cursor: pointer
     color: var(--text-p2)
-    font-weight: 500
+    font-weight: $fw-500
     position: relative
     line-height: 1.2
     outline: none
@@ -38,12 +38,12 @@
 .tag-plugin.folders details[open]
   >summary
     color: var(--text-p1)
-    font-weight: 700
+    font-weight: $fw-700
     &:after
       content: '-'
       
   >div.body
-    --fsp: $fsp1
+    --fs-content: $fs-content-1
     >:first-child
       margin-top: 1rem
     >:last-child

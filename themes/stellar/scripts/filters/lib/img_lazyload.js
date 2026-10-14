@@ -1,52 +1,79 @@
 /**
- * img_lazyload.js v1 | https://github.com/xaoxuu/hexo-theme-stellar/
+ * img_lazyload.js v2 | https://github.com/xaoxuu/hexo-theme-stellar/
  *
+ * 懒加载强制开启：不再读取 enable 配置，no-lazy 是唯一例外。
+ * v2：改为属性感知的 <img> 标签解析，仅在标签自身范围内读取 src，
+ * 并跳过 <script>/<style>/<!-- --> 区域，避免与「去属性引号」的 HTML
+ * 压缩器（如 hexo-minify removeAttributeQuotes）组合时正则跨标签越界，
+ * 误改写页内内联脚本中的 `s.src = "..."`。
  */
 
-'use strict';
+"use strict";
 
-// 懒加载强制开启：不再读取 enable 配置，no-lazy 是唯一例外
-function lazyProcess(htmlContent) {
-  return htmlContent.replace(/<img(.*?)src="(.*?)"(.*?)>/gi, function(imgTag, src_before, src_value, src_after) {
-    // 已由 tag 插件输出懒加载标记（data-src / data-srcset）的图片不重复处理
-    if (/data-src/gi.test(imgTag)) {
-      return imgTag;
+const { mapImageTags, parseImageAttributes } = require("../../lib/html-images");
+
+// 1×1 透明 PNG：懒加载占位图
+const LOADING_IMG =
+  "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=";
+
+// 处理单个 <img> 标签：加 lazy 类并替换 src 为占位图 + data-src
+function processImgTag(imgTag) {
+  // 快速跳过：整标签已含懒加载标记 / 原生 srcset / no-lazy（兼容压缩前后写法）
+  if (/data-src/gi.test(imgTag)) {
+    return imgTag;
+  }
+  if (/srcset=/gi.test(imgTag)) {
+    return imgTag;
+  }
+  if (/\bno-lazy\b/gi.test(imgTag)) {
+    return imgTag;
+  }
+
+  const selfClosing = /\/>$/.test(imgTag);
+  const inner = imgTag.slice(4, selfClosing ? imgTag.length - 2 : imgTag.length - 1);
+  const attrs = parseImageAttributes(inner);
+  const src = attrs.find((a) => a.name === "src");
+  // 无 src / 空 src / 已是占位图（data:image）时不处理
+  if (!src || src.value == null || src.value === "" || /^data:image/i.test(src.value)) {
+    return imgTag;
+  }
+
+  const classAttr = attrs.find((a) => a.name === "class");
+  const oldClass = classAttr && classAttr.value != null ? classAttr.value : "";
+  const newClass = (oldClass ? oldClass + " " : "") + "lazy";
+
+  let out = "<img";
+  if (!classAttr) {
+    out += ' class="' + newClass + '"';
+  }
+  let pos = 0;
+  for (const a of attrs) {
+    out += inner.slice(pos, a.start);
+    if (a.name === "src") {
+      out += 'src="' + LOADING_IMG + '" data-src="' + src.value + '"';
+    } else if (a.name === "class") {
+      out += 'class="' + newClass + '"';
+    } else {
+      out += a.raw;
     }
-    // 使用 srcset 的图片交给浏览器原生处理，避免占位图与 srcset 冲突
-    if (/srcset=/gi.test(imgTag)) {
-      return imgTag;
-    }
-    if (/src="data:image(.*?)/gi.test(imgTag)) {
-      return imgTag;
-    }
-    // no-lazy 兼容 `no-lazy` / `no-lazy=""` 两种写法
-    if (/\bno-lazy\b/gi.test(imgTag)) {
-      return imgTag;
-    }
-    var newImgTag = imgTag;
-    if (newImgTag.includes(' class="') == false) {
-      newImgTag = newImgTag.slice(0,4) + ' class=""' + newImgTag.slice(4);
-    }
-    // class 中增加 lazy
-    newImgTag = newImgTag.replace(/(.*?) class="(.*?)" (.*?)>/gi, function(ori, before, value, after){
-      var newClass = value;
-      if (newClass.length > 0) {
-        newClass += ' ';
-      }
-      newClass += 'lazy';
-      if (value) {
-        return ori.replace('class="' + value, 'class="' + newClass);
-      } else {
-        return ori.replace('class="', 'class="' + newClass);
-      }
-    });
-    // 加载图
-    const loadingImg = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=';
-    newImgTag = newImgTag.replace(src_value, loadingImg + '" data-src="' + src_value);
-    return newImgTag;
-  });
+    pos = a.end;
+  }
+  out += inner.slice(pos);
+  out += selfClosing ? "/>" : ">";
+  return out;
 }
 
-module.exports.processSite = function(htmlContent) {
+function lazyProcess(htmlContent) {
+  // 短路：无 <img 的页面（如 404）无需扫描
+  if (typeof htmlContent !== "string" || !/<img/i.test(htmlContent)) {
+    return htmlContent;
+  }
+  return mapImageTags(htmlContent, processImgTag);
+}
+
+module.exports.processSite = function (htmlContent) {
   return lazyProcess.call(this, htmlContent);
 };
+
+module.exports.lazyProcess = lazyProcess;
+module.exports.processImgTag = processImgTag;

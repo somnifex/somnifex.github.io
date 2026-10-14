@@ -1,9 +1,5 @@
 ---
-wiki: pi-cookbook
 title: 调试与排错
-seo_title: 调试与排错
-group: "🔴 高级与扩展"
-order: 17
 ---
 
 > 🟡 Builder & 🔴 开发者 | Pi 出问题的时候，先别急着翻源码。按下面的顺序排查能在 5 分钟内定位大多数问题；剩下那 5% 再去看 GitHub issues。

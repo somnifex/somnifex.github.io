@@ -1,9 +1,5 @@
 ---
-wiki: pi-cookbook
 title: 21 个提示模板
-seo_title: 21 个提示模板
-group: "🟡 进阶使用"
-order: 11
 ---
 
 > 🟡 Builder 进阶 | 21 个常见任务的提示模板，可以直接复制、或者保存到 `~/.pi/agent/prompts/` 作为可复用的斜杠命令。

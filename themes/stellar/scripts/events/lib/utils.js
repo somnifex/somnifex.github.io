@@ -71,8 +71,8 @@ module.exports = hexo => {
     }
   };
   hexo.utils = {
-    icon: (key, args) => {
-      const { icons } = hexo.theme.config
+    icon: (key, args, inline) => {
+      const { icons } = hexo.stellar.data;
       var result = ''
       if (icons[key]) {
         result = icons[key]
@@ -81,9 +81,18 @@ module.exports = hexo => {
       }
       if (result.startsWith('/') || result.startsWith('https://') || result.startsWith('http://')) {
         return `<img ${args?.length > 0 ? args : ''} src="${result}" />`
+      } else if (inline === true) {
+        return result
+      } else if (result.startsWith('<svg')) {
+        // 非首屏图标：输出占位符，由 deferred-icons Runtime Extension 异步替换
+        return `<svg class="icon" viewBox="0 0 1 1" data-icon="${key}" aria-hidden="true"></svg>`
       } else {
         return result
       }
+    },
+    iconData: (key) => {
+      const { icons } = hexo.stellar.data;
+      return icons && icons[key] ? icons[key] : ''
     }
   };
 };

@@ -22,17 +22,39 @@ svg.loading
   border-radius: $border-card
   position relative
   padding: 2rem
-  svg  
+  svg,
+  .lazy-icon
     margin: 4px
+  .lazy-icon
+    display: inline-block
   &:after 
-    content: hexo-config('style.loading.loading')
+    content: var(--text-loading)
     color: var(--text-p1)
     display: block
     font-size: 14px
   &.error
+    .lazy-icon
+      display: none
     &:after
-      content: hexo-config('style.loading.error')
+      content: var(--text-loading-error)
 
 .article-footer
   .loading-wrap
     background: none
+
+.loading-wrap.navigation-loading
+  position: fixed
+  top: calc(env(safe-area-inset-top, 0px) + 1rem)
+  left: 50%
+  transform: translateX(-50%)
+  z-index: 1000
+  display: flex
+  align-items: center
+  gap: .5rem
+  padding: .5rem 1rem
+  background: var(--card)
+  box-shadow: 0 2px 12px rgba(0, 0, 0, .12)
+  pointer-events: none
+  .lazy-icon
+    flex-shrink: 0
+    margin: 0

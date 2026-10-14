@@ -9,7 +9,7 @@
     display: flex
     align-items: center
     border-bottom: none
-    font-weight: 700
+    font-weight: $fw-700
     padding: 0 24px
     @media screen and (max-width: $device-mobile)
       padding: 0 20px
@@ -22,14 +22,14 @@
   text-wrap: balance
   h1,h2
     font-size: $fsh2
-    font-weight: 900
+    font-weight: $fw-900
     padding: 4px 32px 0
     @media screen and (max-width: $device-mobile)
       padding: 4px 24px 0
   h3,h4,h5,h6
     font-size: $fsh3
   p
-    font-size: calc(var(--fsp) + 2px)
+    font-size: calc(var(--fs-content) + 2px)
     color: var(--text)
 
 // type=icon
@@ -40,11 +40,18 @@
     color: var(--accent)
     border-radius: 0
     flex-shrink: 0
+  img
+    width: auto
   span.text
     margin: 0 .5rem
     padding-top: 1px
   span.empty
     padding: 0 8px
+  .quot-icon.colorful[color]
+    display: inline-flex
+    flex-shrink: 0
+    img,svg
+      color: var(--theme)
 
 .md-text .tag-plugin.quot.p
   .content
@@ -71,4 +78,3 @@
         opacity: 0.2
         filter: blur(8px)
         transform: translateY(4px) scale(1.2, 1.5)
-

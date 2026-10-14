@@ -1,9 +1,5 @@
 ---
-wiki: pi-cookbook
 title: 工具：内置 / 只读 / 自定义
-seo_title: 工具：内置 / 只读 / 自定义
-group: "🟡 进阶使用"
-order: 6
 ---
 
 > 🟡 Builder 必读 | 本章讲 Pi 的内置工具、如何启用只读工具、如何控制工具权限。

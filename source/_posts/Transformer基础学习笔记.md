@@ -14,8 +14,8 @@ tags:
   - Sequence Modeling
   - 序列建模
 
-comments: true
-toc: true
+comments:
+  enabled: true
 ---
 
 ### Why Transformer

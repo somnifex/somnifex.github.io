@@ -1,10 +1,9 @@
 ---
-wiki: claude-code-cookbook
 title: Headless Claude Code
 date: 2026-08-11 00:00:00
 tags: [Claude Code, Wiki]
-category: wiki
-mermaid: true
+render:
+  diagrams: mermaid
 ---
 
 > 来源：Claude Code Cookbook · Part 32 · 原文标题：Part 32 — Headless Claude Code

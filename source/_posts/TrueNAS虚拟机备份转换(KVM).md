@@ -12,8 +12,8 @@ tags:
   - zvol存储
   - trueNAS
 
-comments: true
-toc: true
+comments:
+  enabled: true
 ---
 ## 虚拟机导出
 

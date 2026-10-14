@@ -13,8 +13,8 @@ tags:
   - 包管理
   - 环境
 
-comments: true
-toc: true
+comments:
+  enabled: true
 ---
 ## anaconda/miniconda的安装
 

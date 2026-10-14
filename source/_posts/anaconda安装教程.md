@@ -14,8 +14,8 @@ tags:
   - 包管理
   - 虚拟化
 
-comments: true
-toc: true
+comments:
+  enabled: true
 ---
 ### anaconda简介
 

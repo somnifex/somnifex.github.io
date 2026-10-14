@@ -1,5 +1,7 @@
-(function () {
-  const els = Array.from(document.getElementsByClassName('ds-memos'));
+document.currentScript.stellarMount = function (root, context) {
+  const utils = context.serviceUtils;
+
+  const els = Array.from(root.getElementsByClassName('ds-memos'));
 
   els.forEach(el => {
     const api = el.dataset.api;
@@ -48,7 +50,8 @@
           let user = memos.users.find(user => user.id === parseInt(creatorId));
           if (!user) {
             if (!memos.requests[creatorId]) {
-              memos.requests[creatorId] = fetch(`${memos.site}/api/v1/users/${creatorId}`)
+              // 走统一请求入口，用户详情同样纳入本地缓存（service: memos-user）
+              memos.requests[creatorId] = utils.requestWithoutLoading(`${memos.site}/api/v1/users/${creatorId}`, { service: 'memos-user' })
                   .then(response => response.json())
                   .then(data => {
                     if (data.username) {
@@ -58,9 +61,14 @@
                       user = null;
                     }
                   })
+                  .catch(() => {
+                    // 用户详情失败时回退默认昵称/头像，不阻塞 memo 渲染
+                    user = null;
+                  })
                   .finally(() => delete memos.requests[creatorId]);
             }
             await memos.requests[creatorId];
+            context.signal.throwIfAborted();
             user = memos.users.find(user => user.id === parseInt(creatorId));
           }
           const name = user ? user.nickname || user.username : 'memos';
@@ -78,7 +86,8 @@
           let user = memos.users.find(user => user.name.split('/')[1] === creatorId);
           if (!user) {
             if (!memos.requests[creatorId]) {
-              memos.requests[creatorId] = fetch(`${memos.site}/api/v1/users/${creatorId}`)
+              // 走统一请求入口，用户详情同样纳入本地缓存（service: memos-user）
+              memos.requests[creatorId] = utils.requestWithoutLoading(`${memos.site}/api/v1/users/${creatorId}`, { service: 'memos-user' })
                   .then(response => response.json())
                   .then(data => {
                     if (data.username) {
@@ -88,12 +97,16 @@
                       user = null;
                     }
                   })
+                  .catch(() => {
+                    // 用户详情失败时回退默认昵称/头像，不阻塞 memo 渲染
+                    user = null;
+                  })
                   .finally(() => delete memos.requests[creatorId]);
             }
             await memos.requests[creatorId];
+            context.signal.throwIfAborted();
             user = memos.users.find(user => user.name.split('/')[1] === creatorId);
           }
-          console.log(JSON.stringify(user));
           const name = user ? user.displayName || user.username : 'memos';
           const avatarUrl = user?.avatarUrl ? `${memos.site}${user.avatarUrl}` : default_avatar || '';
           return `<div class="user-info">${avatarUrl ? `<img src="${avatarUrl}">` : ''}<span>${name}</span></div>`;
@@ -102,6 +115,50 @@
         buildImages: (item) => (item.attachments || []).filter(res => res.type?.includes('image/')).map(res =>
             `<div class="image-bg"><img src="${res.externalLink || `https://${host}/file/${res.name}/${res.filename}`}"></div>`
         )
+      },
+      "v1": {
+        buildUser: async (item, memos, default_avatar) => {
+          const creator = item?.creator || '';
+          const creatorId = creator.split('/')[1] || creator;
+          const findUser = () => memos.users.find(user =>
+            (user.name || '').split('/')[1] === creatorId || String(user.id) === creatorId
+          );
+          let user = findUser();
+          if (!user && !memos.requests[creatorId]) {
+            memos.requests[creatorId] = utils.requestWithoutLoading(`${memos.site}/api/v1/users/${encodeURIComponent(creator)}`, { service: 'memos-user' })
+                .then(response => response.json())
+                .then(data => {
+                  if (data.username) {
+                    memos.users.push(data);
+                    user = data;
+                  }
+                })
+                .catch(() => {})
+                .finally(() => delete memos.requests[creatorId]);
+          }
+          if (memos.requests[creatorId]) {
+            await memos.requests[creatorId];
+            context.signal.throwIfAborted();
+            user = findUser();
+          }
+          const name = user ? user.displayName || user.username : 'memos';
+          const avatarUrl = user?.avatarUrl
+            ? (user.avatarUrl.startsWith('http') ? user.avatarUrl : `${memos.site}${user.avatarUrl}`)
+            : default_avatar || '';
+          return `<div class="user-info">${avatarUrl ? `<img src="${avatarUrl}">` : ''}<span>${name}</span></div>`;
+        },
+        buildDate: item => {
+          const d = new Date(item.createTime);
+          return isNaN(d.getTime()) ? new Date() : d;
+        },
+        buildImages: (item, host) => {
+          const list = (item.attachments || item.resources || []).filter(res =>
+            res && res.type && String(res.type).includes('image/')
+          );
+          return list.map(res =>
+            `<div class="image-bg"><img src="${res.externalLink || res.url || `https://${host}/file/${res.name}/${res.filename}`}"></div>`
+          );
+        }
       },
       "feature": {
         buildUser: async () => "memos",
@@ -114,14 +171,23 @@
           memos.version = "22-";
           memos.data = data;
           console.log("当前Memos版本为22-");
-        } else if (data.memos && !data.memos[0].attachments) {
-          memos.version = "22+";
-          memos.data = data.memos;
-          console.log("当前Memos版本为22+");
-        } else if (data.memos && data.memos[0].attachments) {
-          memos.version = "25+";
-          memos.data = data.memos;
-          console.log("当前Memos版本为25+");
+        } else if (data && Array.isArray(data.memos) && data.memos.length > 0) {
+          const first = data.memos[0];
+          const creatorId = String(first.creator || '').split('/')[1] || '';
+          const isV1 = first.createTime != null && creatorId.length > 0 && !/^\d+$/.test(creatorId);
+          if (isV1) {
+            memos.version = "v1";
+            memos.data = data.memos;
+            console.log("当前Memos版本为v1");
+          } else if (first.attachments) {
+            memos.version = "25+";
+            memos.data = data.memos;
+            console.log("当前Memos版本为25+");
+          } else {
+            memos.version = "22+";
+            memos.data = data.memos;
+            console.log("当前Memos版本为22+");
+          }
         } else {
           memos.version = "feature";
           console.log("当前Memos版本过高，请到Stellar社区反馈");
@@ -130,4 +196,5 @@
       }
     };
   });
-})();
+
+};

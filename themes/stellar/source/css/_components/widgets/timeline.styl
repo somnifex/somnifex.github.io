@@ -9,12 +9,12 @@
     a
       trans1 all
       word-break: break-all
-      --fsp: $fsp2
+      --fs-content: $fs-content-2
   .tag-plugin.timeline .timenode
     z-index 1
     margin-top: 0.25rem
     .header
-      margin: 0.25rem var(--gap-padding)
+      margin: 0.25rem var(--gap-base)
       .user-info
         background: none
         padding-right: 0
@@ -22,12 +22,12 @@
         display: none
 
     .header:before
-      left: calc(6px - var(--gap-padding))
+      left: calc(6px - var(--gap-base))
     .body
-      border-radius: $border-card-s
+      border-radius: $border-card
       padding: 0.5rem 1rem
       p,li
-        --fsp: $fsp3
+        --fs-content: $fs-content-3
       code 
         background: none
         padding: 0
@@ -39,11 +39,11 @@
   .tag-plugin.timeline[data-api] .body .footer
     background: none
 
-.l_left .widget-wrapper.timeline
+.site-region--leftbar .widget-wrapper.timeline
   .tag-plugin.timeline
     padding-left: 0
     &:before
       content: none
-.l_left .widget-wrapper.timeline .body
+.site-region--leftbar .widget-wrapper.timeline .body
   box-shadow: none
   background: var(--bg-a50)

@@ -11,8 +11,8 @@ tags:
   - 极大似然估计
   - 高斯假设
 
-comments: true
-toc: true
+comments:
+  enabled: true
 ---
 ## 线性回归
 

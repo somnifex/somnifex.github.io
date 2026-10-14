@@ -11,8 +11,8 @@ tags:
   - PLA
   - 分类
 
-comments: true
-toc: true
+comments:
+  enabled: true
 ---
 ### 一、Perceptron Hypothesis Set
 

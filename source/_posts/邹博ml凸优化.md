@@ -10,8 +10,8 @@ tags:
   - 仿射集
   - 超平面
 
-comments: true
-toc: true
+comments:
+  enabled: true
 ---
 ## 主要内容
 

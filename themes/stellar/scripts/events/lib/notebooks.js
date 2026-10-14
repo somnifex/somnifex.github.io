@@ -1,155 +1,196 @@
 /**
- * notebooks.js v1
+ * Notebook v2 two-stage render/listing projections.
+ *
+ * 笔记本系统构建入口：从唯一 CollectionModel 聚合标签、索引与详情模型。
  */
 
-'use strict'
+"use strict";
 
-const { normalize_path } = require('../../lib/path_utils');
+const {
+  buildNotebookCollectionModel,
+  completeNotebookPageViewModel
+} = require("../../lib/models");
+const { pageViewModelsFor } = require("../../lib/page-view-model-registry");
+const { ensureRuntimeData } = require("../../lib/runtime-data");
+const { sourcePathForData } = require("../../lib/source-config");
+const { deepFreeze } = require("../../schema/schema-utils");
+const {
+  plainTerms,
+  runTwoStage,
+  stableSort
+} = require("../../lib/collection-pipeline/shared");
 
-class NotePage {
-  constructor(page) {
-    this.id = page._id
-    this.notebook = page.notebook
-    this.title = page.title
-    this.tags = page.tags
-    this.path = page.path
-    this.path_key = normalize_path(page.path)
-    this.layout = page.layout
-    this.date = page.date
-    this.updated = page.updated || page.date
-
-    const pin = page.pin ?? page.sticky ?? 0
-    if (pin === true) {
-      this.pin = 1
-    } else if (pin === false) {
-      this.pin = 0
-    } else {
-      this.pin = pin
-    }
-  }
+function recordId(record) {
+  return String(record.page?._id || record.page?.source || record.page?.path || "");
 }
 
-function splitTag(tag) {
-  return tag.split('/').filter(t => t.length > 0)
-}
-
-function prepareNotebook(id, info, ctx) {
-  const notebook = info
-  notebook.id = id
-
-  if (notebook.base_dir) {
-    if (notebook.base_dir.startsWith('/')) {
-      notebook.base_dir = notebook.base_dir.substring(1)
-    }
-    if (notebook.base_dir.length > 1 && !notebook.base_dir.endsWith('/')) {
-      notebook.base_dir = notebook.base_dir + '/'
-    }
-  } else {
-    const notebooksBaseDir = ctx.theme.config.site_tree.notebooks.base_dir
-    notebook.base_dir = notebooksBaseDir ? `${notebooksBaseDir}/${id}` : id
+function buildTagTree(collection, records) {
+  const tags = new Map();
+  tags.set("", {
+    id: "",
+    name: "",
+    label: "",
+    path: collection.route.baseDir,
+    parentId: null,
+    children: new Set(),
+    itemIds: new Set()
+  });
+  for (const tag of collection.navigation.tags) {
+    tags.set(tag.id, {
+      ...tag,
+      children: new Set(),
+      itemIds: new Set()
+    });
   }
-
-  notebook.sort ||= 0
-  notebook.auto_excerpt ||= ctx.theme.config.notebook.auto_excerpt || 0
-  notebook.per_page ??= ctx.theme.config.notebook.per_page ?? ctx.config.per_page ?? 10
-  notebook.order_by ||= ctx.theme.config.notebook.order_by || '-updated'
-  notebook.menu_id ??= ctx.theme.config.site_tree.notes.menu_id
-  notebook.license ??= ctx.theme.config.notebook.license
-  notebook.share ??= ctx.theme.config.notebook.share
-
-  notebook.leftbar ??= ctx.theme.config.site_tree.notes.leftbar
-  notebook.rightbar ??= ctx.theme.config.site_tree.notes.rightbar
-  notebook.note_leftbar ??= ctx.theme.config.site_tree.note.leftbar
-  notebook.note_rightbar ??= ctx.theme.config.site_tree.note.rightbar
-
-  const tagMap = new Map() // tagId: tagInfo
-  notebook.tagTree = tagMap
-
-  const rootTag = {
-    id: '',
-    name: '',
-    part: '',
-    path: notebook.base_dir,
-    parent: null, // parent tag id
-    childSet: new Set(), // child tag ids
-    noteSet: new Set(), // note ids
+  for (const tag of tags.values()) {
+    if (tag.id.length === 0) continue;
+    tags.get(tag.parentId || "")?.children.add(tag.id);
   }
-  tagMap.set(rootTag.id, rootTag)
-
-  // Iterate through all notes in the notebook, build the tag tree.
-  const allPages = ctx.locals.get('pages')
-  const pages = allPages.filter(p => p.notebook === notebook.id)
-  for (const page of pages.data) {
-    rootTag.noteSet.add(page._id)
-
-    if (!page.tags) {
-      continue
-    }
-
-    for (const hierarchyTag of page.tags) {
-      const parts = splitTag(hierarchyTag)
-      let parent = rootTag
-      for (const part of parts) {
-        const tagName = parent.name ? `${parent.name}/${part}` : part
-        const tagId = tagName.toLowerCase()
-        let tag = tagMap.get(tagId)
-        if (tag == null) {
-          tag = {
-            id: tagId,
-            name: tagName,
-            part: part,
-            path: `${notebook.base_dir}/tags/${tagId}`,
-            parent: parent.id,
-            childSet: new Set(),
-            noteSet: new Set(),
-          }
-          tagMap.set(tagId, tag)
-          parent.childSet.add(tagId)
-        }
-
-        tag.noteSet.add(page._id)
-        parent = tag
+  for (const record of records) {
+    const itemId = recordId(record);
+    tags.get("").itemIds.add(itemId);
+    for (const hierarchy of plainTerms(record.config.tags)) {
+      const parts = hierarchy.split("/").filter(Boolean);
+      for (let index = 0; index < parts.length; index += 1) {
+        tags.get(parts.slice(0, index + 1).join("/").toLowerCase())?.itemIds.add(itemId);
       }
     }
   }
-
-  notebook.noteMap = pages.map(p => new NotePage(p)).reduce((map, note) => {
-    map.set(note.id, note)
-    return map
-  }, new Map())
-
-  // Sort child tags for each tag.
-  for (const [_, tag] of tagMap) {
-    tag.children = Array.from(tag.childSet)
-    tag.children.sort()
-  }
-
-  return notebook
+  return Array.from(tags.values()).map(tag => ({
+    ...tag,
+    children: Array.from(tag.children).sort(),
+    itemIds: Array.from(tag.itemIds)
+  }));
 }
 
-function getNotebooksObject(ctx) {
-  const notebooks = {
-    tree: {},
-  }
+function sortNoteItems(items, sort) {
+  const field = sort?.field || "updated";
+  const direction = sort?.direction === "asc" ? 1 : -1;
+  return stableSort(items, (left, right) => (
+    (right.priority - left.priority) ||
+    (String(left[field] || "").localeCompare(String(right[field] || "")) * direction)
+  ));
+}
 
-  const data = ctx.locals.get('data')
-  const list = []
-  for (const [key, info] of Object.entries(data)) {
-    if (!key.startsWith('notebooks/') || key.endsWith('.DS_Store')) {
-      continue
+module.exports = (ctx, pipeline) => {
+  if (!pipeline) throw new TypeError("Stellar v2: Notebook 构建必须由 Collection Pipeline 驱动");
+  const records = pipeline.members("notebook");
+  const collectionConfigs = new Map(pipeline.collections("notebook"));
+  const collectionItems = records.map(record => ({
+    collection: { profile: "notebook", id: record.collectionId },
+    tags: plainTerms(record.config.tags)
+  }));
+  const recordsByCollection = new Map();
+  for (const record of records) {
+    if (!recordsByCollection.has(record.collectionId)) recordsByCollection.set(record.collectionId, []);
+    recordsByCollection.get(record.collectionId).push(record);
+  }
+  const runtimeData = ensureRuntimeData(ctx);
+  const entries = [];
+  const collections = new Map(pipeline.notebookCollections);
+
+  for (const record of records) {
+    const page = record.page;
+    const input = pageViewModelsFor(ctx).getNotebookViewModelInput(page);
+    const base = pageViewModelsFor(ctx).getNotebookViewModelBase(page);
+    if (!input || !base) continue;
+    collections.set(base.collection.id, base.collection);
+    entries.push({ page, input, base });
+  }
+  const tagTrees = new Map(Array.from(collections, ([collectionId, collection]) => [
+    collectionId,
+    buildTagTree(collection, recordsByCollection.get(collectionId) || [])
+  ]));
+
+  const finalViewModels = runTwoStage(entries, {
+    buildBase(entry) {
+      return completeNotebookPageViewModel({
+        ...entry.input,
+        runtimeData,
+        tagTree: tagTrees.get(entry.base.collection.id)
+      }, entry.base);
+    },
+    aggregate(allEntries, viewModels) {
+      const entriesByCollection = new Map();
+      for (let index = 0; index < allEntries.length; index += 1) {
+        const id = allEntries[index].base.collection.id;
+        if (!entriesByCollection.has(id)) entriesByCollection.set(id, []);
+        entriesByCollection.get(id).push(viewModels[index]);
+      }
+      const projections = [];
+      const collectionMap = {};
+      for (const [collectionId, collection] of collections) {
+        const collectionConfig = collectionConfigs.get(collectionId) || {};
+        const collectionViewModels = entriesByCollection.get(collectionId) || [];
+        const baseDir = collection.route.baseDir;
+        const tags = tagTrees.get(collectionId);
+        const items = sortNoteItems(
+          collectionViewModels.map(viewModel => viewModel.render.listing),
+          collection.listing.sort
+        );
+        const recentItems = stableSort(
+          items.filter(item => item.listed !== false),
+          (left, right) => String(right.updated || right.date || "").localeCompare(String(left.updated || left.date || ""))
+        );
+        const identity = collection.identity;
+        const projection = {
+          id: collectionId,
+          href: baseDir,
+          name: identity.name,
+          // 大标题只取显式配置的 headline；identity.headline 会回退到 name，
+          // 直接透传会让「删掉 headline」仍然渲染出同名大标题。
+          headline: typeof collectionConfig.headline === "string" ? collectionConfig.headline : "",
+          caption: identity.tagline || identity.description,
+          description: identity.description,
+          icon: identity.icon || "",
+          cover: collection.cover || "",
+          order: collection.listing.order,
+          listed: collection.visibility.listed !== false,
+          navigation: {
+            menu: collectionConfig.activeMenu ?? null
+          },
+          layout: {
+            topbar: structuredClone(collectionConfig.topbar || {}),
+            leftbar: structuredClone(collectionConfig.leftbar || {}),
+            rightbar: structuredClone(collectionConfig.rightbar || {}),
+            algoliaFilterPath: baseDir
+          },
+          tags,
+          items,
+          recentItems,
+          perPage: collection.listing.perPage
+        };
+        projections.push(projection);
+        collectionMap[collectionId] = projection;
+      }
+      const orderedCollections = stableSort(projections, (left, right) => left.order - right.order);
+      const recentItems = stableSort(
+        orderedCollections
+          .filter(collection => collection.listed !== false)
+          .flatMap(collection => collection.recentItems),
+        (left, right) => String(right.updated || right.date || "").localeCompare(String(left.updated || left.date || ""))
+      );
+      runtimeData.notebookIndex = deepFreeze({
+        items: orderedCollections,
+        collections: collectionMap,
+        recentItems
+      });
+      return runtimeData.notebookIndex;
+    },
+    complete(entry, viewModel, notebookIndex) {
+      const collection = notebookIndex.collections[entry.base.collection.id];
+      entry.completeInput = Object.freeze({
+        ...entry.input,
+        runtimeData,
+        tagTree: collection.tags,
+        recentItems: collection.recentItems
+      });
+      return completeNotebookPageViewModel(entry.completeInput, entry.base);
     }
-    const id = key.substring(10)
-    list.push(prepareNotebook(id, info, ctx))
-  }
-  list.sort((a, b) => a.sort - b.sort)
-  for (const info of list) {
-    notebooks.tree[info.id] = info
-  }
+  });
 
-  return notebooks
-}
-
-module.exports = ctx => {
-  const notebooks = getNotebooksObject(ctx)
-  ctx.theme.config.notebooks = notebooks
-}
+  for (let index = 0; index < entries.length; index += 1) {
+    pageViewModelsFor(ctx).setPageViewModel(entries[index].page, finalViewModels[index]);
+    pageViewModelsFor(ctx).setProfileViewModelInput("notebook", entries[index].page, entries[index].completeInput);
+  }
+};

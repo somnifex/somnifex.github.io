@@ -1,9 +1,5 @@
 ---
-wiki: pi-cookbook
 title: Pi 基础使用
-seo_title: Pi 基础使用
-group: "🟢 新手入门"
-order: 4
 ---
 
 > 🟢 必学基础 | 本章讲 Pi 的交互界面、快捷键、@文件、!命令、模型切换、会话管理。

@@ -13,8 +13,8 @@ tags:
   - 开发环境
   - java安装
 
-comments: true
-toc: true
+comments:
+  enabled: true
 ---
 ## 所需文件：
 

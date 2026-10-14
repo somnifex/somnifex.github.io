@@ -13,8 +13,8 @@ tags:
   - 依赖库
   - wsl2
 
-comments: true
-toc: true
+comments:
+  enabled: true
 ---
 ## 编译环境介绍
 

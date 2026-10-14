@@ -10,8 +10,8 @@ tags:
   - 人工智能
   - 争议
 
-comments: true
-toc: true
+comments:
+  enabled: true
 ---
 
 <html>

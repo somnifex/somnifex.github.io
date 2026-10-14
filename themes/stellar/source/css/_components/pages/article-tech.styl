@@ -1,4 +1,4 @@
-.l_body[type='tech'] article.content
+body[data-article-style='tech'] article.content
   h1,h2,h3,h4,h5,h6
     color: var(--text)
     line-height: 1.8
@@ -12,24 +12,14 @@
         background: var(--accent)
       &:before,&:after
         color: white
-        font-weight: 700
+        font-weight: $fw-700
       &:before
         content: ''
         font-size: 0.5em
       &:after
         font-size: 0.25em
   h2
-    font-weight: 500
+    font-weight: $fw-500
     >a:first-child
       &:before
-        content: hexo-config('style.header_prefix.h2')
-  h3
-    >a:first-child:before
-      content: hexo-config('style.header_prefix.h3')
-  h4
-    >a:first-child:before
-      content: hexo-config('style.header_prefix.h4')
-  h5
-    >a:first-child:before
-      content: hexo-config('style.header_prefix.h5')
-    
+        content: ':'

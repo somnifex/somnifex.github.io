@@ -1,9 +1,5 @@
 ---
-wiki: pi-cookbook
 title: 模型与服务商
-seo_title: 模型与服务商
-group: "🟡 进阶使用"
-order: 8
 ---
 
 > 🟡 Builder 必读 | 本章讲 Pi 支持哪些模型、如何配置 API Key、如何接入本地模型。

@@ -15,8 +15,8 @@ tags:
   - 神经网络
   - 卷积神经网络
 
-comments: true
-toc: true
+comments:
+  enabled: true
 ---
 ## 实现load_img_as_np_array
 

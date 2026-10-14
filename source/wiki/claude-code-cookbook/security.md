@@ -1,10 +1,9 @@
 ---
-wiki: claude-code-cookbook
 title: Security
 date: 2026-08-11 00:00:00
 tags: [Claude Code, Wiki]
-category: wiki
-mermaid: true
+render:
+  diagrams: mermaid
 ---
 
 > 来源：Claude Code Cookbook · Part 39 · 原文标题：Part 39 — Security

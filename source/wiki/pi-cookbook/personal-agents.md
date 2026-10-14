@@ -1,9 +1,5 @@
 ---
-wiki: pi-cookbook
 title: 个人 Agent 配置
-seo_title: 个人 Agent 配置
-group: "🔴 高级与扩展"
-order: 14
 ---
 
 > 🔴 开发者章节 | 把 Pi 调教成你的专属助手：前端专家、后端架构师、DevOps、测试工程师……

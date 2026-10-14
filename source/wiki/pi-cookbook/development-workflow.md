@@ -1,9 +1,5 @@
 ---
-wiki: pi-cookbook
 title: 10 套开发工作流
-seo_title: 10 套开发工作流
-group: "🟡 进阶使用"
-order: 10
 ---
 
 > 🟡 Builder 进阶 | 10 个常见开发场景的 Pi 用法。下面都是可以直接复制的 `pi -p "..."` / `pi --tools read,grep,find,ls -p "..."` 形式，根据你的项目大小和信任程度挑选。

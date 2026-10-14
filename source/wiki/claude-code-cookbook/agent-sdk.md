@@ -1,10 +1,9 @@
 ---
-wiki: claude-code-cookbook
 title: Claude Agent SDK
 date: 2026-08-11 00:00:00
 tags: [Claude Code, Wiki]
-category: wiki
-mermaid: true
+render:
+  diagrams: mermaid
 ---
 
 > 来源：Claude Code Cookbook · Part 33 · 原文标题：Part 33 — Claude Agent SDK

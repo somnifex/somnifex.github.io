@@ -11,10 +11,10 @@ tags:
   - 机器翻译
   - 自注意力
   - seq2seq
-  - transformer
+  - Transformer
 
-comments: true
-toc: true
+comments:
+  enabled: true
 ---
 ## Attention(注意力机制)
 

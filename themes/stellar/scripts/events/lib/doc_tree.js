@@ -1,216 +1,111 @@
 /**
  * doc_tree.js v2 | https://github.com/xaoxuu/hexo-theme-stellar/
+ *
+ * Wiki 文档树构建入口：委托 scripts/lib/doc_tree.js 的纯函数，
+ * 将 Wiki 运行时树写入 ctx.stellar.data.wiki。
  */
 
-'use strict';
+"use strict";
 
-const { normalize_path } = require('../../lib/path_utils');
+const { getCollectionId } = require("../../lib/content-config");
+const { buildWikiTree } = require("../../lib/doc_tree");
+const { requireLayoutProfiles } = require("../../lib/layout-config");
+const {
+  buildWikiCollectionModel,
+  buildWikiListingRender,
+  buildWikiPageViewModelBase,
+  buildWikiRelated,
+  completeWikiPageViewModel
+} = require("../../lib/models");
+const { ensureRuntimeData } = require("../../lib/runtime-data");
+const { pageViewModelsFor } = require("../../lib/page-view-model-registry");
+const { sourcePathForData } = require("../../lib/source-config");
 
-class WikiPage {
-  constructor(page) { 
-    this.id = page._id
-    this.wiki = page.wiki
-    this.title = page.title
-    this.path = page.path
-    this.path_key = normalize_path(page.path)
-    this.layout = page.layout
-    this.updated = page.updated
-  }
+function cloneConfig(value) {
+  return value == null ? value : structuredClone(value);
 }
 
-function getWikiObject(ctx) {
-  var wiki = { tree:{} }
-  const data = ctx.locals.get('data')
-  var list = []
-  for (let key of Object.keys(data)) {
-    if (key.endsWith('.DS_Store')) {
-      continue
-    }
-    if (key.includes('wiki/') && key.length > 5) {
-      let newKey = key.replace('wiki/', '')
-      let obj = data[key]
-      if ((typeof obj.tags == 'string') && obj.tags.constructor == String) {
-        obj.tags = [obj.tags]
-      }
-      if ((typeof obj.tree == 'object') && obj.tree.constructor == Array) {
-        obj.tree = { '': obj.tree }
-      }
-      obj.id = newKey
-      if (obj.sort == null) {
-        obj.sort = 0
-      }
-      if (obj.base_dir) {
-        if (obj.base_dir.startsWith('/')) {
-          obj.base_dir = obj.base_dir.substring(1)
-        }
-        if (obj.base_dir.length > 1 && obj.base_dir.endsWith('/') == false) {
-          obj.base_dir = obj.base_dir + '/'
-        }
-      } else {
-        obj.base_dir = ''
-      }
-      list.push(obj)
-    }
+module.exports = (ctx, pipeline) => {
+  if (!pipeline) throw new TypeError("Stellar v2: Wiki 构建必须由 Collection Pipeline 驱动");
+  const data = ctx.locals.get("data");
+  const records = pipeline.members("wiki");
+  const pages = records.map(record => record.page);
+  const parsedPages = new Map(records.map(record => [record.page, record.config]));
+  const collectionConfigs = new Map(pipeline.collections("wiki").map(([id, config]) => [id, cloneConfig(config)]));
+  const normalizedData = { ...data };
+  for (const [id, value] of collectionConfigs) {
+    normalizedData[`wiki/${id}`] = cloneConfig(value);
   }
-  list = list.sort((p1, p2) => p2.sort - p1.sort)
-  for (let item of list) {
-    wiki.tree[item.id] = item
-  }
-  return wiki
-}
 
-module.exports = ctx => {
-  // wiki 配置
-  var wiki = getWikiObject(ctx)
-  const pages = ctx.locals.get('pages')
-  // wiki 所有页面
-  const wiki_pages = pages.filter(p => (p.wiki != null)).map(p => new WikiPage(p))
-  const wiki_list = Object.keys(wiki.tree).filter(id => wiki_pages.some(p => p.wiki === id))
-  // 上架的项目列表
-  wiki.shelf = ctx.locals.get('data').wiki || []
-  
-  // 数据整合：项目标签
-  var all_tag_name = []
-  for (let id of wiki_list) {
-    let item = wiki.tree[id]
-    let tags = item.tags
-    if (tags) {
-      tags.forEach((tag, i) => {
-        if (all_tag_name.includes(tag) === false) {
-          all_tag_name.push(tag)
-        }
-      })
-      wiki.tree[id].tags = tags
+  const wiki = buildWikiTree({
+    data: normalizedData,
+    pages,
+    pageConfigs: parsedPages,
+    shelf: data.wiki || [],
+    wikiIndexPath: requireLayoutProfiles(ctx.stellar?.config).wikiIndex.path
+  });
+  const runtimeData = ensureRuntimeData(ctx);
+  runtimeData.wiki = wiki;
+
+  const collectionModels = new Map();
+  const entries = [];
+  const homepageEntries = new Map();
+  for (const record of records) {
+    const page = record.page;
+    const config = record.config;
+    if (config == null) continue;
+    const collectionId = getCollectionId(config, "wiki");
+    if (collectionId == null) continue;
+    const input = {
+      ...pipeline.modelInput(record),
+      collectionSource: sourcePathForData(`wiki/${collectionId}`),
+      collectionId,
+      collectionConfig: collectionConfigs.get(collectionId),
+      collectionState: wiki.tree[collectionId],
+      collectionListed: wiki.shelf.includes(collectionId),
+      isBackup: process.env.IS_BACKUP === "true"
+    };
+    if (!collectionModels.has(collectionId)) collectionModels.set(collectionId, buildWikiCollectionModel(input, collectionId));
+    input.collectionModel = collectionModels.get(collectionId);
+    const base = buildWikiPageViewModelBase(input);
+    const entry = { page, collectionId, input, base };
+    entries.push(entry);
+    if (!homepageEntries.has(collectionId) || base.item.route.path === base.collection.route.homepage) {
+      homepageEntries.set(collectionId, entry);
     }
   }
 
-  // 补充项目名称和首页
-  for (let id of wiki_list) {
-    let item = wiki.tree[id]
-    item.id = id
-    if (item.title == undefined || item.title.length === 0) {
-      item.title = id
-    }
-    if (item.name == undefined || item.name.length == 0) {
-      item.name = id
-    }
-  }
-  
-  // 数据整合：每个项目的子页面
-  for (let i = 0; i < wiki_list.length; i++) {
-    let id = wiki_list[i];
-    let item = wiki.tree[id]
-    let sub_pages = wiki_pages.filter(p => p.wiki === id)
-
-    // 首页
-    // 未特别指定首页时，获取TOC第一页作为首页
-    var homepage = item.homepage
-    if (homepage == null && item.tree != null) {
-      for (let id of Object.keys(item.tree)) {
-        const sec = item.tree[id]
-        for (let key of sec) {
-          let hs = sub_pages.filter(p => p.path_key == normalize_path(item.base_dir + key))
-          if (hs.length > 0) {
-            homepage = hs[0]
-            break
-          }
-        }
-        if (homepage != null) {
-          break
-        }
-      }
-    }
-    if (homepage == null) {
-      homepage = sub_pages[0]
-    }
-    if (typeof homepage == 'string') {
-      homepage = {path: homepage}
-    }
-    homepage.is_homepage = true
-    item.homepage = homepage
-    // 内页分组
-    var sections = []
-    var others = sub_pages
-    if (item.tree) {
-      // 根据配置设置顺序
-      for (let title of Object.keys(item.tree)) {
-        var sec = { title: title, pages: []}
-        for (let key of item.tree[title]) {
-          const pagePathKey = normalize_path(item.base_dir + key)
-          sec.pages = sec.pages.concat(sub_pages.filter(p => p.path_key == pagePathKey))
-          others = others.filter(p => p.path_key != pagePathKey)
-        }
-        sections.push(sec)
-      }
-      if (others.length > 0 && others.filter(p => p.title?.length > 0).length > 0) {
-        sections.push({
-          title: '...',
-          pages: others.sort((p1, p2) => p1.title - p2.title)
-        })
-      }
-    } else {
-      // 自动设置顺序
-      sections.push({
-        pages: sub_pages.sort((p1, p2) => p1.title - p2.title)
-      })
-    }
-    
-    // page number
-    var page_number = 0
-    for (let sec of sections) {
-      for (let page of sec.pages) {
-        page.page_number = page_number++
-      }
-    }
-    item.sections = sections
-    item.pages = sub_pages
-  }
-  
-  // 全站所有的项目标签
-  var all_tags = {}
-  all_tag_name.forEach((tag_name, i) => {
-    var items = []
-    for (let id of wiki_list) {
-      let item = wiki.tree[id]
-      // 过滤掉找不到页面的项目
-      if (item.homepage == null) {
-        continue
-      }
-      // 过滤掉未上架的项目
-      if (!wiki.shelf.includes(item.id)) {
-        continue
-      }
-      if (item.tags && item.tags.includes(tag_name) === true && items.includes(tag_name) === false) {
-        items.push(item.id)
-      }
-    }
-    all_tags[tag_name] = {
-      name: tag_name,
-      path: (ctx.theme.config.site_tree.index_wiki.base_dir) + '/tags/' + tag_name + '/index.html',
-      items: items
-    }
-  })
-
-  // 关联相似项目
-  for (let id of wiki_list) {
-    let item = wiki.tree[id]
-    if (item.tags) {
-      var relatedItems = []
-      item.tags.forEach((tag_name, i) => {
-        let relatedOtherItems = all_tags[tag_name].items.filter(name => name != item.id)
-        if (relatedOtherItems.length > 0) {
-          relatedItems.push({
-            name: tag_name,
-            items: relatedOtherItems
-          })
-        }
-      })
-      item.relatedItems = relatedItems
-    }
+  const listings = new Map();
+  for (const [collectionId, entry] of homepageEntries) {
+    listings.set(collectionId, buildWikiListingRender(entry.input, entry.base.collection));
   }
 
-  wiki.all_tags = all_tags
-  wiki.all_pages = wiki_pages
-  ctx.theme.config.wiki = wiki
+  for (const entry of entries) {
+    const relatedCollections = (wiki.tree[entry.collectionId]?.relatedItems || []).map(group => ({
+      name: group.name,
+      items: (group.items || [])
+        .map(id => homepageEntries.get(id)?.base.collection)
+        .filter(Boolean)
+    }));
+    const related = buildWikiRelated({ relatedCollections });
+    const completeInput = Object.freeze({
+      ...entry.input,
+      related,
+      listing: listings.get(entry.collectionId)
+    });
+    pageViewModelsFor(ctx).setPageViewModel(entry.page, completeWikiPageViewModel(completeInput, entry.base));
+    pageViewModelsFor(ctx).setProfileViewModelInput("wiki", entry.page, completeInput);
+    pageViewModelsFor(ctx).setProfileViewModelBase("wiki", entry.page, entry.base);
+  }
 
-}
+  wiki.index = {
+    items: wiki.shelf
+      .map(id => listings.get(id))
+      .filter(item => item?.listed === true),
+    tags: Object.values(wiki.all_tags || {}).map(tag => ({
+      name: String(tag.name || ""),
+      path: String(tag.path || ""),
+      itemIds: Array.isArray(tag.items) ? tag.items.slice() : []
+    }))
+  };
+};

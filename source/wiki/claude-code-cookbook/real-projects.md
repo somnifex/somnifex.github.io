@@ -1,10 +1,9 @@
 ---
-wiki: claude-code-cookbook
 title: Real Projects
 date: 2026-08-11 00:00:00
 tags: [Claude Code, Wiki]
-category: wiki
-mermaid: true
+render:
+  diagrams: mermaid
 ---
 
 > 来源：Claude Code Cookbook · Part 48 · 原文标题：Part 48 — Real Projects

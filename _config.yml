@@ -20,8 +20,8 @@ url: https://blog.somnifex.com
 permalink: :title/
 permalink_defaults:
 pretty_urls:
-  trailing_index: true # Set to false to remove trailing 'index.html' from permalinks
-  trailing_html: true # Set to false to remove trailing '.html' from permalinks
+  trailing_index: false # 不在链接中保留 index.html 尾缀
+  trailing_html: false # 不在链接中保留 .html 尾缀
 
 # Directory
 source_dir: source
@@ -125,6 +125,8 @@ neat_js:
   exclude:
     - '**/*.min.js'
     - '**/index.js'
+    # js/runtime 为原生 ESM 模块，不做压缩与变量改名
+    - '**/js/runtime/**'
 
 feed:
   type: atom

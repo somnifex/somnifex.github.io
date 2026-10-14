@@ -1,9 +1,5 @@
 ---
-wiki: pi-cookbook
 title: 安全：Trust ≠ Sandbox
-seo_title: 安全：Trust ≠ Sandbox
-group: "🟡 进阶使用"
-order: 7
 ---
 
 > 🟢 必读 | 本章是 Pi 安全模型的核心：**Pi 没有内置沙箱**，它用你的用户权限执行命令。理解这一点能避免 90% 的误用风险。

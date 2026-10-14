@@ -1,7 +1,7 @@
 ---
-wiki: pi-cookbook
 title: Pi Agent Cookbook
-seo_title: Pi Agent Cookbook  # 用 seo_title 占位，不在 tree 中显示
+visibility:
+  listed: false # 不在目录/列表中展示（仅作为直达页面）
 ---
 
 # Pi Agent Cookbook

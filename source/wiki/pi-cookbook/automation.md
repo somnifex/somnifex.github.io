@@ -1,9 +1,5 @@
 ---
-wiki: pi-cookbook
 title: 自动化：cron / CI / RPC
-seo_title: 自动化：cron / CI / RPC
-group: "🔴 高级与扩展"
-order: 16
 ---
 
 > 🔴 开发者章节 | 把 Pi 接到 CI、cron、脚本里——它的"机器人"形态。本章依赖的三个开关是 `-p`、`--mode json`、`--mode rpc`，分别对应"一次性输出"、"JSONL 事件流"、"双向 JSON-RPC"。
