@@ -99,8 +99,28 @@ article:
 # -----------------------------------------------------------------------------
 
 appearance:
+  # 外观预设：card / glass / minimal / flat。
+  # minimal 即主题的「Editorial Minimal 有机编辑式极简」，自带 hue 44 暖纸色系
+  # （浅色 --background: hsla(44 50% 96%) / --card: hsla(44 50% 98%)，深色另有一套），
+  # 并去掉普通组件的卡片背景/边框/阴影，改用排版与下划线表达层级。
+  preset: minimal
+
+  # 语义颜色，取值对齐参考站 xaoxuu.com
+  colors:
+    primary: hsl(40 96% 55%) # 金：激活态下划线、选中控件、blockquote 悬停
+    accent: '#f60' # 橙：Widget / 相关文章悬停文字、button 悬停
+    link: hsl(166 66% 32%) # 墨绿：正文链接
+
+  # 排版：衬线正文 + Monaco 代码字体，取值对齐参考站
+  typography:
+    font_family:
+      body: '"Iowan Old Style", "Palatino Linotype", "Noto Serif SC", "Songti SC", "Courier New", ui-serif, Georgia, "Times New Roman", serif'
+      code: 'Monaco, Menlo, Consolas, system-ui, "Courier New", monospace, sans-serif'
+
   backgrounds:
     leftbar:
+      # 注意：backgrounds.leftbar 仅被 glass 预设消费，card/minimal 下不生效，
+      # 此段仅为将来切换 glass 时保留。
       type: gradient # none / gradient / image
       gradient: # 每项需恰好 4 个颜色
         light:
